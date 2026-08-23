@@ -337,8 +337,7 @@ def get_student_dashboard(
     }
 
     # 6. Welcome Message
-    goal_str = f" to work towards '{profile.learning_goal}'" if profile.learning_goal else ""
-    welcome_message = f"Welcome back, {current_user.full_name}! Ready{goal_str} today?"
+    welcome_message = f"Welcome back, {current_user.full_name}!"
 
     return StudentDashboardData(
         user_name=current_user.full_name,
