@@ -154,7 +154,22 @@ async def scan_and_solve_question_image(
       2. Perform RAG vector context retrieval over NCERT knowledge base.
       3. Return structured solution: Problem, Concept, Steps, Answer, Verification, Similar Question.
     """
+    # Security: File type & size validation
+    ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/pjpeg"}
+    MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
+
+    if file.content_type and file.content_type.lower() not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file type. Only PNG, JPEG, and WebP images are allowed.",
+        )
+
     image_bytes = await file.read()
+    if len(image_bytes) > MAX_FILE_SIZE_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="File size exceeds maximum limit of 5 MB.",
+        )
 
     # Fetch weak topics
     weak_masteries = (

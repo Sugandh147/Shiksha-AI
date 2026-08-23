@@ -41,9 +41,33 @@ function StudentDashboardContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Join Class State
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
+  const [joiningClass, setJoiningClass] = useState(false);
+
   useEffect(() => {
     fetchDashboard();
   }, []);
+
+  const handleJoinClass = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!joinCode.trim()) return;
+    setJoiningClass(true);
+    try {
+      const res = await api.post<{ message: string; class_name: string }>("/student/classes/join", {
+        invite_code: joinCode.trim().toUpperCase(),
+      });
+      alert(res.message);
+      setShowJoinModal(false);
+      setJoinCode("");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "Failed to join class.";
+      alert(msg);
+    } finally {
+      setJoiningClass(false);
+    }
+  };
 
   const fetchDashboard = async () => {
     setLoading(true);
@@ -111,6 +135,14 @@ function StudentDashboardContent() {
           </Link>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowJoinModal(true)}
+              className="btn btn-secondary text-xs py-2 px-3 flex items-center gap-1.5 border"
+              style={{ borderColor: "var(--color-border)" }}
+            >
+              <BookOpen className="w-3.5 h-3.5 text-indigo-400" /> <span>+ Join Class</span>
+            </button>
+
             <Link
               href="/profile"
               className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-white/5 transition-colors border"
@@ -370,6 +402,57 @@ function StudentDashboardContent() {
           </div>
         </div>
       </div>
+
+      {/* Join Class Modal Overlay */}
+      {showJoinModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="glass rounded-3xl p-6 md:p-8 max-w-md w-full border space-y-6 animate-in zoom-in-95 duration-200" style={{ borderColor: "var(--color-border)" }}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-indigo-400" /> Join Teacher Class
+              </h3>
+              <button onClick={() => setShowJoinModal(false)} className="text-muted hover:text-white text-lg font-bold">&times;</button>
+            </div>
+
+            <p className="text-xs text-muted">
+              Enter the 6-character unique Class Join Code provided by your teacher (e.g. <span className="font-bold text-indigo-300">MATH8A</span>).
+            </p>
+
+            <form onSubmit={handleJoinClass} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Class Join Code</label>
+                <input
+                  type="text"
+                  required
+                  maxLength={6}
+                  placeholder="e.g. MATH8A"
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                  className="w-full bg-surface border rounded-xl py-3 px-4 text-base font-mono font-bold tracking-widest text-center focus:outline-none focus:border-indigo-500 uppercase"
+                  style={{ borderColor: "var(--color-border)", color: "var(--color-text)" }}
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowJoinModal(false)}
+                  className="btn btn-secondary py-2 px-4 text-xs font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={joiningClass || !joinCode.trim()}
+                  className="btn btn-primary py-2 px-5 text-xs font-bold flex items-center gap-2"
+                >
+                  {joiningClass ? "Joining Class..." : "Join Class"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

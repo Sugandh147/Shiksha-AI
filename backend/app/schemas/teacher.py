@@ -37,6 +37,15 @@ class TeacherStudentOut(BaseModel):
     overall_mastery: float = 0.0
 
 
+class ClassCreateRequest(BaseModel):
+    name: str = Field(..., description="Name of the class e.g. Class 8 - Section A")
+    grade_level: int = Field(..., description="Grade level e.g. 8")
+
+
+class JoinClassRequest(BaseModel):
+    invite_code: str = Field(..., description="Unique class join code e.g. MATH8A")
+
+
 class ClassItem(BaseModel):
     id: int
     name: str

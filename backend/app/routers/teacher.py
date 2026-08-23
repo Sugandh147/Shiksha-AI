@@ -16,6 +16,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
+import secrets
+import string
+
 from app.config import settings
 from app.core.constants import (
     WEAK_TOPIC_THRESHOLD_PCT, HIGH_RISK_THRESHOLD_PCT, MEDIUM_RISK_THRESHOLD_PCT
@@ -29,12 +32,52 @@ from app.dependencies import require_teacher
 from app.schemas.teacher import (
     TeacherProfileOut, TeacherStudentOut, ClassItem, ClassAnalyticsOut,
     StudentAttentionInfo, DifficultTopicItem, ImprovedStudentItem,
-    StudentDetailInsightsOut, CopilotQueryRequest, CopilotQueryResponse
+    StudentDetailInsightsOut, CopilotQueryRequest, CopilotQueryResponse,
+    ClassCreateRequest, JoinClassRequest
 )
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="", tags=["Teacher Intelligence (ClassPulse)"])
+
+
+def generate_invite_code(length: int = 6) -> str:
+    alphabet = string.ascii_uppercase + string.digits
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+
+@router.post("/teacher/classes", response_model=ClassItem)
+@router.post("/teachers/classes", response_model=ClassItem)
+def create_teacher_class(
+    payload: ClassCreateRequest,
+    current_user: User = Depends(require_teacher),
+    db: Session = Depends(get_db),
+):
+    """Create a new class and generate a unique alphanumeric invite code."""
+    code = generate_invite_code(6)
+    for _ in range(10):
+        if not db.query(Class).filter(Class.invite_code == code).first():
+            break
+        code = generate_invite_code(6)
+
+    new_class = Class(
+        name=payload.name.strip(),
+        grade_level=payload.grade_level,
+        teacher_id=current_user.id,
+        invite_code=code,
+        is_active=True,
+    )
+    db.add(new_class)
+    db.commit()
+    db.refresh(new_class)
+
+    return ClassItem(
+        id=new_class.id,
+        name=new_class.name,
+        grade_level=new_class.grade_level,
+        invite_code=new_class.invite_code,
+        student_count=0,
+    )
 
 
 # ── Helper for Class RBAC Verification ───────────────────────────────────────

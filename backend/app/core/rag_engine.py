@@ -121,7 +121,7 @@ class RAGEngine:
         weak_str = ", ".join(weak_topics) if weak_topics else "None"
 
         context_text = "\n\n".join(
-            [f"[Source {idx+1}: {c['title']}]\n{c['chunk_text']}" for idx, c in enumerate(chunks)]
+            [f"[Source {idx+1}: {c['title']}]\n{c['chunk_text'][:400]}" for idx, c in enumerate(chunks)]
         )
 
         lang_instruction = get_language_instruction(language)

@@ -152,7 +152,7 @@ class Class(Base):
     id          = Column(Integer, primary_key=True, index=True)
     name        = Column(String(100), nullable=False)           # "Class 8 - Section A"
     grade_level = Column(Integer, nullable=False)
-    teacher_id  = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    teacher_id  = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     invite_code = Column(String(20), unique=True, nullable=True)
     is_active   = Column(Boolean, default=True)
     created_at  = Column(DateTime(timezone=True), server_default=func.now())
@@ -170,8 +170,8 @@ class ClassMember(Base):
     __table_args__ = (UniqueConstraint("class_id", "student_id"),)
 
     id         = Column(Integer, primary_key=True, index=True)
-    class_id   = Column(Integer, ForeignKey("classes.id", ondelete="CASCADE"), nullable=False)
-    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    class_id   = Column(Integer, ForeignKey("classes.id", ondelete="CASCADE"), nullable=False, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     joined_at  = Column(DateTime(timezone=True), server_default=func.now())
 
     class_   = relationship("Class", back_populates="members")
@@ -233,7 +233,7 @@ class Question(Base):
     correct_answer = Column(String(10), nullable=False)  # "A", "B", "C", or "D"
     explanation    = Column(Text, nullable=False)   # Why this answer is correct
     grade_level    = Column(Integer, nullable=True)
-    is_diagnostic  = Column(Boolean, default=False) # Used in baseline diagnostic
+    is_diagnostic  = Column(Boolean, default=False, index=True) # Used in baseline diagnostic
     created_at     = Column(DateTime(timezone=True), server_default=func.now())
 
     subject = relationship("Subject", back_populates="questions")
@@ -268,7 +268,7 @@ class QuizAttempt(Base):
     __tablename__ = "quiz_attempts"
 
     id               = Column(Integer, primary_key=True, index=True)
-    student_id       = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    student_id       = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     question_id      = Column(Integer, ForeignKey("questions.id", ondelete="CASCADE"), nullable=False)
     chosen_answer    = Column(String(10), nullable=False)
     is_correct       = Column(Boolean, nullable=False)
@@ -289,8 +289,8 @@ class SkillMastery(Base):
     __table_args__ = (UniqueConstraint("student_id", "topic_id"),)
 
     id             = Column(Integer, primary_key=True, index=True)
-    student_id     = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    topic_id       = Column(Integer, ForeignKey("topics.id", ondelete="CASCADE"), nullable=False)
+    student_id     = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    topic_id       = Column(Integer, ForeignKey("topics.id", ondelete="CASCADE"), nullable=False, index=True)
     mastery_score  = Column(Float, default=50.0)       # 0.0 to 100.0
     current_level  = Column(Enum(DifficultyLevel), default=DifficultyLevel.easy)
     correct_streak = Column(Integer, default=0)        # Consecutive correct answers
@@ -310,7 +310,7 @@ class LearningEvent(Base):
     __tablename__ = "learning_events"
 
     id         = Column(Integer, primary_key=True, index=True)
-    user_id    = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id    = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     event_type = Column(Enum(LearningEventType), nullable=False)
     payload    = Column(JSON, nullable=True)    # Flexible extra context
     xp_earned  = Column(Integer, default=0)

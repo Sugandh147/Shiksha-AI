@@ -50,6 +50,12 @@ function ClassPulseContent() {
   const [copilotResponse, setCopilotResponse] = useState<CopilotQueryResponse | null>(null);
   const [showReasonsForStudent, setShowReasonsForStudent] = useState<Record<number, boolean>>({});
 
+  // Create Class Modal State
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newClassName, setNewClassName] = useState("");
+  const [newClassGrade, setNewClassGrade] = useState(8);
+  const [creatingClass, setCreatingClass] = useState(false);
+
   useEffect(() => {
     fetchClasses();
   }, []);
@@ -117,6 +123,27 @@ function ClassPulseContent() {
     setShowReasonsForStudent((prev) => ({ ...prev, [sId]: !prev[sId] }));
   };
 
+  const handleCreateClass = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newClassName.trim()) return;
+    setCreatingClass(true);
+    try {
+      const res = await api.post<ClassItem>("/teachers/classes", {
+        name: newClassName.trim(),
+        grade_level: newClassGrade,
+      });
+      setClasses((prev) => [...prev, res]);
+      setSelectedClassId(res.id);
+      setShowCreateModal(false);
+      setNewClassName("");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "Failed to create class.";
+      alert(msg);
+    } finally {
+      setCreatingClass(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       {/* Top Navbar */}
@@ -138,6 +165,14 @@ function ClassPulseContent() {
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Create Class Button */}
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="btn btn-primary text-xs py-2 px-3 flex items-center gap-1.5 shadow-md"
+            >
+              <BookOpen className="w-4 h-4" /> <span>+ Create Class</span>
+            </button>
+
             {/* Class Selector Dropdown */}
             {classes.length > 0 && (
               <div className="flex items-center gap-2">
@@ -476,6 +511,66 @@ function ClassPulseContent() {
           </>
         )}
       </main>
+
+      {/* Create Class Modal Overlay */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="glass rounded-3xl p-6 md:p-8 max-w-md w-full border space-y-6 animate-in zoom-in-95 duration-200" style={{ borderColor: "var(--color-border)" }}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-indigo-400" /> Create New Class
+              </h3>
+              <button onClick={() => setShowCreateModal(false)} className="text-muted hover:text-white text-lg font-bold">&times;</button>
+            </div>
+
+            <form onSubmit={handleCreateClass} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Class Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Class 8 - Section A"
+                  value={newClassName}
+                  onChange={(e) => setNewClassName(e.target.value)}
+                  className="w-full bg-surface border rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-indigo-500"
+                  style={{ borderColor: "var(--color-border)", color: "var(--color-text)" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Grade Level</label>
+                <input
+                  type="number"
+                  required
+                  min={1}
+                  max={12}
+                  value={newClassGrade}
+                  onChange={(e) => setNewClassGrade(Number(e.target.value))}
+                  className="w-full bg-surface border rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-indigo-500"
+                  style={{ borderColor: "var(--color-border)", color: "var(--color-text)" }}
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="btn btn-secondary py-2 px-4 text-xs font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingClass || !newClassName.trim()}
+                  className="btn btn-primary py-2 px-5 text-xs font-bold flex items-center gap-2"
+                >
+                  {creatingClass ? "Generating Code..." : "Create Class"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
