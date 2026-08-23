@@ -113,21 +113,26 @@ def generate_practice_set(
                 )
             )
 
-    # Fallback to strictly grade-matched question bank if DB has no questions for this grade
-    if not q_out:
+    # Supplement if fewer than count questions exist in DB for this grade
+    if len(q_out) < count:
         from app.core.question_bank import get_grade_questions
         bank_qs = get_grade_questions(student_grade)
-        for idx, bq in enumerate(bank_qs[:count], start=2000 * student_grade):
-            q_out.append(
-                PracticeQuestionOut(
-                    question_id=idx,
-                    question_text=bq["question_text"],
-                    options=bq["options"],
-                    topic_id=target_topic.id,
-                    topic_name=bq["topic_name"],
-                    difficulty=bq["difficulty"],
+        used_texts = {q.question_text for q in q_out}
+        for idx, bq in enumerate(bank_qs, start=2000 * student_grade):
+            if len(q_out) >= count:
+                break
+            if bq["question_text"] not in used_texts:
+                used_texts.add(bq["question_text"])
+                q_out.append(
+                    PracticeQuestionOut(
+                        question_id=idx,
+                        question_text=bq["question_text"],
+                        options=bq["options"],
+                        topic_id=target_topic.id,
+                        topic_name=bq["topic_name"],
+                        difficulty=bq["difficulty"],
+                    )
                 )
-            )
 
     return PracticeGenerateResponse(
         session_topic_name=target_topic.name,

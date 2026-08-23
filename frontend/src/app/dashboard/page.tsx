@@ -639,17 +639,11 @@ function StudentDashboardContent() {
   const mastery = Math.round(data.overall_mastery ?? 0);
   const topicsMastered = data.weak_topics ? Math.max(0, 25 - data.weak_topics.length) : 18;
 
-  /* ── Weak topics: use live data or 3 demo rows ── */
-  const weakRows = data.weak_topics.length > 0
-    ? data.weak_topics.slice(0, 3).map((wt) => ({ name: wt.topic_name, score: Math.round(wt.mastery_score) }))
-    : [
-        { name: "Quadratic Equations", score: 42 },
-        { name: "Linear Equations",    score: 58 },
-        { name: "Triangles",           score: 65 },
-      ];
+  /* ── Weak topics: use live backend topics ── */
+  const weakRows = data.weak_topics.map((wt) => ({ name: wt.topic_name, score: Math.round(wt.mastery_score) }));
 
   const suggestedPrompt =
-    data.ask_ai_tutor?.suggested_prompt || "Explain quadratic equations in simple hindi";
+    data.ask_ai_tutor?.suggested_prompt || `Help me understand Class ${user?.student_profile?.grade_level || 10} concepts`;
 
   return (
     <div style={S.pageWrap}>
@@ -755,18 +749,13 @@ function StudentDashboardContent() {
                           <div style={S.activityTime}>{act.timestamp}</div>
                         </div>
                         {act.xp_earned > 0 && (
-                          <span style={S.scoreBadge}>{act.xp_earned}%</span>
+                          <span style={S.scoreBadge}>{act.xp_earned} XP</span>
                         )}
                       </div>
                     ))
                   ) : (
-                    <div style={S.activityItem}>
-                      <div style={S.activityIcon}>✏️</div>
-                      <div style={{ flex: 1 }}>
-                        <div style={S.activityTitle}>Practice Session: Algebra</div>
-                        <div style={S.activityTime}>2 hrs ago</div>
-                      </div>
-                      <span style={S.scoreBadge}>85%</span>
+                    <div style={{ padding: "14px 0", color: "#64748b", fontSize: 13, textAlign: "center" }}>
+                      No practice sessions recorded yet. Click "Start Practice" to begin!
                     </div>
                   )}
                 </div>

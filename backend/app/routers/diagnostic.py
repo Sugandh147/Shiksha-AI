@@ -62,38 +62,43 @@ def start_diagnostic_quiz(
     # If DB questions for target_grade are found, use them
     q_list: List[QuestionOutForDiagnostic] = []
     topics_set = set()
+    used_texts = set()
 
     if db_questions:
         for q in db_questions:
-            top_name = q.topic.name if q.topic else f"Class {target_grade} Concepts"
-            topics_set.add(top_name)
-            q_list.append(
-                QuestionOutForDiagnostic(
-                    id=q.id,
-                    question_text=q.question_text,
-                    options=q.options or {},
-                    topic_id=q.topic_id,
-                    topic_name=top_name,
-                    difficulty=q.difficulty.value if hasattr(q.difficulty, "value") else str(q.difficulty),
+            if q.question_text not in used_texts:
+                used_texts.add(q.question_text)
+                top_name = q.topic.name if q.topic else f"Class {target_grade} Concepts"
+                topics_set.add(top_name)
+                q_list.append(
+                    QuestionOutForDiagnostic(
+                        id=q.id,
+                        question_text=q.question_text,
+                        options=q.options or {},
+                        topic_id=q.topic_id,
+                        topic_name=top_name,
+                        difficulty=q.difficulty.value if hasattr(q.difficulty, "value") else str(q.difficulty),
+                    )
                 )
-            )
 
-    # Fallback to strictly grade-matched questions from grade question bank (NEVER mix other grades)
-    if not q_list:
+    # Supplement if fewer than 5 questions exist for this grade (never mix other grades)
+    if len(q_list) < 5:
         from app.core.question_bank import get_grade_questions
         bank_qs = get_grade_questions(target_grade)
         for idx, bq in enumerate(bank_qs, start=1000 * target_grade):
-            topics_set.add(bq["topic_name"])
-            q_list.append(
-                QuestionOutForDiagnostic(
-                    id=idx,
-                    question_text=bq["question_text"],
-                    options=bq["options"],
-                    topic_id=1,
-                    topic_name=bq["topic_name"],
-                    difficulty=bq["difficulty"],
+            if bq["question_text"] not in used_texts:
+                used_texts.add(bq["question_text"])
+                topics_set.add(bq["topic_name"])
+                q_list.append(
+                    QuestionOutForDiagnostic(
+                        id=idx,
+                        question_text=bq["question_text"],
+                        options=bq["options"],
+                        topic_id=1,
+                        topic_name=bq["topic_name"],
+                        difficulty=bq["difficulty"],
+                    )
                 )
-            )
 
     subject_name = f"Class {target_grade} Curriculum"
     if db_questions and db_questions[0].subject:
