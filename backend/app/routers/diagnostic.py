@@ -7,7 +7,7 @@ Diagnostic Assessment API endpoints:
   • GET  /diagnostic/results — Retrieve latest assessment results
 """
 
-from typing import List, Dict
+from typing import List, Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -19,7 +19,7 @@ from app.db.models import (
 )
 from app.dependencies import require_student
 from app.schemas.diagnostic import (
-    DiagnosticStartResponse, QuestionOutForDiagnostic,
+    DiagnosticStartRequest, DiagnosticStartResponse, QuestionOutForDiagnostic,
     DiagnosticSubmitRequest, DiagnosticResultResponse,
     TopicPerformance, QuestionReviewItem
 )
