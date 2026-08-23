@@ -381,23 +381,29 @@ function StudentDashboardContent() {
             </h2>
 
             <div className="glass rounded-2xl p-5 space-y-4">
-              {data.recent_activity.map((act) => (
-                <div key={act.id} className="flex items-start gap-3 text-sm pb-3 border-b last:border-0 last:pb-0" style={{ borderColor: "var(--color-border)" }}>
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: "rgba(99, 102, 241, 0.15)", color: "#6366f1" }}>
-                    <Activity className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate">{act.title}</div>
-                    <div className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>{act.description}</div>
-                    <div className="flex items-center gap-3 mt-1.5 text-xs" style={{ color: "var(--color-text-subtle)" }}>
-                      <span>{act.timestamp}</span>
-                      {act.xp_earned > 0 && (
-                        <span className="text-emerald-400 font-semibold">+{act.xp_earned} XP</span>
-                      )}
+              {data.recent_activity.length > 0 ? (
+                data.recent_activity.map((act) => (
+                  <div key={act.id} className="flex items-start gap-3 text-sm pb-3 border-b last:border-0 last:pb-0" style={{ borderColor: "var(--color-border)" }}>
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: "rgba(99, 102, 241, 0.15)", color: "#6366f1" }}>
+                      <Activity className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold truncate">{act.title}</div>
+                      <div className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>{act.description}</div>
+                      <div className="flex items-center gap-3 mt-1.5 text-xs" style={{ color: "var(--color-text-subtle)" }}>
+                        <span>{act.timestamp}</span>
+                        {act.xp_earned > 0 && (
+                          <span className="text-emerald-400 font-semibold">+{act.xp_earned} XP</span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="py-6 text-center text-xs text-muted">
+                  No learning activity yet. Complete your diagnostic assessment to start tracking your progress!
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>

@@ -316,19 +316,6 @@ def get_student_dashboard(
             )
         )
 
-    # Fallback default activity if none exist
-    if not recent_activity:
-        recent_activity.append(
-            RecentActivityItem(
-                id=0,
-                activity_type="onboarding",
-                title="Account Setup Complete",
-                description="Welcome to ShikshaAI! Your learning path is ready.",
-                timestamp="Just now",
-                xp_earned=50,
-            )
-        )
-
     # 4. Continue Learning Recommendation
     continue_item: Optional[ContinueLearningItem] = None
     if sorted_masteries:
