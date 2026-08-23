@@ -16,12 +16,13 @@ import Link from "next/link";
 import {
   Brain, Send, Sparkles, BookOpen, ArrowLeft, Wand2, Lightbulb,
   CheckCircle2, HelpCircle, FileText, AlertTriangle, ShieldCheck,
-  ChevronDown, ChevronUp, RefreshCw, Bookmark, MessageSquare
+  ChevronDown, ChevronUp, RefreshCw, Bookmark, MessageSquare, Globe
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import api from "@/lib/api";
 import { TutorChatResponse, SourceCitation, WeakTopicItem } from "@/types";
+import { SUPPORTED_LANGUAGES } from "@/lib/languages";
 
 interface ChatBubble {
   id: string;
@@ -45,6 +46,7 @@ function AITutorContent() {
 
   const [inputMessage, setInputMessage] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("Quadratic Equations");
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [sessionId, setSessionId] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [weakTopics, setWeakTopics] = useState<WeakTopicItem[]>([]);
@@ -54,7 +56,7 @@ function AITutorContent() {
     {
       id: "welcome",
       sender: "assistant",
-      text: `Hello ${user?.full_name?.split(" ")[0] || "there"}! I'm your AI Mathematics Tutor. Ask me anything about Algebra, Quadratic Equations, Trigonometry, Geometry, or Statistics!`,
+      text: `Hello ${user?.full_name?.split(" ")[0] || "there"}! I'm your AI Mathematics Tutor. Ask me anything about Algebra, Quadratic Equations, Trigonometry, Geometry, or Statistics in English, Hindi (हिंदी), or Hinglish!`,
       timestamp: "Just now",
     },
   ]);
@@ -87,6 +89,15 @@ function AITutorContent() {
     const text = textToSend || inputMessage;
     if (!text.trim() || loading) return;
 
+    // Detect implicit language requests in text if prompt contains Hindi/Hinglish triggers
+    let effectiveLang = selectedLanguage;
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes("in hindi") || lowerText.includes("hindi me")) {
+      effectiveLang = "hi";
+    } else if (lowerText.includes("in hinglish") || lowerText.includes("hinglish me") || lowerText.includes("samjhao") || lowerText.includes("mujhe")) {
+      effectiveLang = "hi-en";
+    }
+
     const userBubbleId = `user-${Date.now()}`;
     const newMessages: ChatBubble[] = [
       ...messages,
@@ -108,6 +119,7 @@ function AITutorContent() {
         topic_name: selectedTopic,
         session_id: sessionId,
         modifier: modifier,
+        language: effectiveLang,
       });
 
       setSessionId(res.session_id);
@@ -168,27 +180,47 @@ function AITutorContent() {
                   Shiksha<span className="gradient-text">AI</span> Tutor
                 </h1>
                 <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
-                  <ShieldCheck className="w-3 h-3" /> Grounded RAG Knowledge Engine
+                  <ShieldCheck className="w-3 h-3" /> Grounded Multilingual RAG Engine
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Topic Selector */}
-          <div className="hidden sm:flex items-center gap-2">
-            <span className="text-xs font-semibold text-muted">Topic:</span>
-            <select
-              value={selectedTopic}
-              onChange={(e) => setSelectedTopic(e.target.value)}
-              className="bg-surface border rounded-xl text-xs py-1.5 px-3 font-semibold focus:outline-none focus:border-indigo-500"
-              style={{ borderColor: "var(--color-border)", color: "var(--color-text)" }}
-            >
-              <option value="Algebra">Algebra</option>
-              <option value="Quadratic Equations">Quadratic Equations</option>
-              <option value="Trigonometry">Trigonometry</option>
-              <option value="Geometry">Geometry</option>
-              <option value="Statistics">Statistics</option>
-            </select>
+          <div className="hidden sm:flex items-center gap-3">
+            {/* Multilingual Language Selector */}
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-indigo-400" />
+              <span className="text-xs font-semibold text-muted">Language:</span>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="bg-surface border rounded-xl text-xs py-1.5 px-3 font-semibold focus:outline-none focus:border-indigo-500"
+                style={{ borderColor: "var(--color-border)", color: "var(--color-text)" }}
+              >
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.flag} {lang.nativeName} ({lang.name})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Topic Selector */}
+            <div className="flex items-center gap-2 pl-3 border-l" style={{ borderColor: "var(--color-border)" }}>
+              <span className="text-xs font-semibold text-muted">Topic:</span>
+              <select
+                value={selectedTopic}
+                onChange={(e) => setSelectedTopic(e.target.value)}
+                className="bg-surface border rounded-xl text-xs py-1.5 px-3 font-semibold focus:outline-none focus:border-indigo-500"
+                style={{ borderColor: "var(--color-border)", color: "var(--color-text)" }}
+              >
+                <option value="Algebra">Algebra</option>
+                <option value="Quadratic Equations">Quadratic Equations</option>
+                <option value="Trigonometry">Trigonometry</option>
+                <option value="Geometry">Geometry</option>
+                <option value="Statistics">Statistics</option>
+              </select>
+            </div>
           </div>
         </div>
       </header>

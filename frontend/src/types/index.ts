@@ -272,6 +272,7 @@ export interface TutorChatRequest {
   topic_name?: string;
   session_id?: number;
   modifier?: "simpler" | "deeper" | "example" | "practice";
+  language?: string;
 }
 
 export interface TutorChatResponse {
@@ -329,6 +330,83 @@ export interface RecommendedPracticeItem {
   current_level: string;
   reason: string;
 }
+
+// ── Teacher Intelligence (ClassPulse) ──────────────────────────────────────────
+
+export interface ClassItem {
+  id: number;
+  name: string;
+  grade_level: number;
+  invite_code?: string;
+  student_count: number;
+}
+
+export interface StudentAttentionInfo {
+  student_id: number;
+  full_name: string;
+  email: string;
+  class_name: string;
+  risk_level: "High" | "Medium" | "Low";
+  risk_score: number;
+  flagged_reasons: string[];
+}
+
+export interface DifficultTopicItem {
+  topic_id: number;
+  topic_name: string;
+  subject_name: string;
+  average_mastery: number;
+  students_struggling_count: number;
+}
+
+export interface ImprovedStudentItem {
+  student_id: number;
+  full_name: string;
+  overall_mastery: number;
+  recent_gain: number;
+  streak_days: number;
+}
+
+export interface ClassAnalyticsOut {
+  class_id: number;
+  class_name: string;
+  total_students: number;
+  average_mastery: number;
+  average_quiz_accuracy: number;
+  students_needing_attention: StudentAttentionInfo[];
+  most_difficult_topics: DifficultTopicItem[];
+  most_improved_students: ImprovedStudentItem[];
+}
+
+export interface StudentDetailInsightsOut {
+  student_id: number;
+  full_name: string;
+  email: string;
+  grade_level: number;
+  class_name: string;
+  overall_mastery: number;
+  attention_level: string;
+  flagged_reasons: string[];
+  weak_topics: Record<string, any>[];
+  recent_performance: Record<string, any>[];
+  quiz_history: Record<string, any>[];
+  practice_history: Record<string, any>[];
+  frequent_mistakes: Record<string, any>[];
+  recommended_intervention: string;
+}
+
+export interface CopilotQueryRequest {
+  question: string;
+  class_id?: number;
+}
+
+export interface CopilotQueryResponse {
+  query: string;
+  answer: string;
+  data_sources: string[];
+  recommended_actions: string[];
+}
+
 
 
 

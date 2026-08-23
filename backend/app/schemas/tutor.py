@@ -20,6 +20,7 @@ class TutorChatRequest(BaseModel):
     topic_name: Optional[str] = Field(None, description="Current topic context e.g. Quadratic Equations")
     session_id: Optional[int] = Field(None, description="Existing ChatSession ID to continue conversation")
     modifier: Optional[str] = Field(None, description="Quick modifier: simpler, deeper, example, practice")
+    language: Optional[str] = Field(None, description="Explanation language: en, hi, hi-en")
 
 
 class TutorChatResponse(BaseModel):

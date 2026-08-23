@@ -1,12 +1,12 @@
 """
 app/core/rag_engine.py
 ───────────────────────
-Retrieval-Augmented Generation (RAG) Core Engine:
+Retrieval-Augmented Generation (RAG) Core Engine with Multilingual Learning Support:
   1. Text Vector Indexing & Cosine Similarity Search over DB document chunks.
   2. Context Retrieval & Source Citation formatting.
-  3. Student Metadata Enrichment (Class/Grade level, Weak Topics).
+  3. Student Metadata Enrichment & Centralized Language Instruction Injection.
   4. Gemini LLM Generation with JSON Schema enforcement.
-  5. Grounded RAG Fallback Synthesizer when Gemini API is unavailable.
+  5. Multilingual Grounded RAG Fallback Synthesizer (English, Hindi, Hinglish).
 """
 
 import math
@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db.models import DocumentChunk, Document, User, StudentProfile
+from app.core.languages import get_language_instruction, get_language_config
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +63,7 @@ def cosine_similarity(vec1: Dict[str, float], vec2: Dict[str, float]) -> float:
 
 class RAGEngine:
     """
-    RAG Engine for AI Mathematics Tutor.
+    RAG Engine for AI Mathematics Tutor with Multilingual Learning.
     Retrieves educational document chunks, builds enriched prompts, and generates grounded answers.
     """
 
@@ -72,17 +73,12 @@ class RAGEngine:
         query: str,
         top_k: int = 3
     ) -> List[Dict[str, Any]]:
-        """
-        Perform vector similarity search over database document chunks.
-        Returns top_k relevant chunks with similarity score, document title, and source URL.
-        """
         chunks = db.query(DocumentChunk, Document).join(Document, DocumentChunk.document_id == Document.id).all()
         if not chunks:
             return []
 
         query_tokens = tokenize(query)
         if not query_tokens:
-            # Fallback to simple split if query contains only short terms
             query_tokens = [w.lower() for w in query.split() if len(w) > 0]
 
         query_vec = compute_vector(query_tokens)
@@ -94,7 +90,6 @@ class RAGEngine:
             sim_score = cosine_similarity(query_vec, chunk_vec)
             scored_chunks.append((sim_score, chunk, doc))
 
-        # Sort descending by similarity score
         scored_chunks.sort(key=lambda x: x[0], reverse=True)
 
         results: List[Dict[str, Any]] = []
@@ -104,7 +99,7 @@ class RAGEngine:
                 "title": doc.title,
                 "source_url": doc.source_url or "NCERT Mathematics Repository",
                 "chunk_text": chunk.chunk_text,
-                "relevance_score": round(max(score, 0.45), 2),  # Normalized relevance score for UI display
+                "relevance_score": round(max(score, 0.45), 2),
             })
 
         return results
@@ -114,10 +109,11 @@ class RAGEngine:
         student: User,
         weak_topics: List[str],
         chunks: List[Dict[str, Any]],
-        modifier: Optional[str] = None
+        modifier: Optional[str] = None,
+        language: str = "en"
     ) -> str:
         """
-        Build pedagogical RAG system prompt with student metadata and context chunks.
+        Build pedagogical RAG system prompt with student metadata, language rules, and context chunks.
         """
         profile = student.student_profile
         grade_level = profile.grade_level if profile else 8
@@ -128,15 +124,17 @@ class RAGEngine:
             [f"[Source {idx+1}: {c['title']}]\n{c['chunk_text']}" for idx, c in enumerate(chunks)]
         )
 
+        lang_instruction = get_language_instruction(language)
+
         modifier_instruction = ""
         if modifier == "simpler":
-          modifier_instruction = "IMPORTANT: Use very simple real-world analogies suitable for a young student. Avoid dense math jargon."
+            modifier_instruction = "IMPORTANT: Use very simple real-world analogies suitable for a young student. Avoid dense math jargon."
         elif modifier == "deeper":
-          modifier_instruction = "IMPORTANT: Provide deeper mathematical intuition, proofs, and formal definitions."
+            modifier_instruction = "IMPORTANT: Provide deeper mathematical intuition, proofs, and formal definitions."
         elif modifier == "example":
-          modifier_instruction = "IMPORTANT: Emphasize a clear step-by-step numerical worked example."
+            modifier_instruction = "IMPORTANT: Emphasize a clear step-by-step numerical worked example."
         elif modifier == "practice":
-          modifier_instruction = "IMPORTANT: Include a practice question with answer key at the end."
+            modifier_instruction = "IMPORTANT: Include a practice question with answer key at the end."
 
         prompt = f"""
 You are ShikshaAI's expert Mathematics AI Tutor.
@@ -145,6 +143,9 @@ Target Student Profile:
 - Class/Grade Level: Class {grade_level}
 - Learning Goal: {goal}
 - Weak Topics Identified: {weak_str}
+- Preferred Language: {language}
+
+{lang_instruction}
 
 {modifier_instruction}
 
@@ -153,8 +154,8 @@ INSTRUCTIONS:
 2. If the student asks about a weak topic ({weak_str}), break it down patiently step by step.
 3. Output MUST be valid JSON matching this schema:
 {{
-  "explanation": "Clear grounded explanation tailored for Class {grade_level}",
-  "step_by_step": ["Step 1...", "Step 2...", "Step 3..."],
+  "explanation": "Clear grounded explanation in the requested language",
+  "step_by_step": ["Step 1 in requested language...", "Step 2...", "Step 3..."],
   "example": "Worked example with calculation and final answer",
   "follow_up": ["Suggested follow-up question 1?", "Suggested follow-up question 2?"]
 }}
@@ -172,20 +173,20 @@ INSTRUCTIONS:
         student: User,
         weak_topics: List[str],
         user_message: str,
-        modifier: Optional[str] = None
+        modifier: Optional[str] = None,
+        language: str = "en"
     ) -> Dict[str, Any]:
         """
-        Main entry point for generating grounded RAG responses.
-        1. Retrieve top 3 context chunks via vector search.
-        2. Build enriched RAG prompt.
-        3. Call Gemini LLM API (if configured).
-        4. Fallback to Grounded RAG Synthesizer if API key is missing or call fails.
+        Main entry point for generating multilingual grounded RAG responses.
         """
+        # Fallback to student's preferred language if omitted
+        target_lang = language or student.preferred_language or "en"
+
         # 1. Retrieve top 3 chunks
         chunks = cls.retrieve_context_chunks(db, user_message, top_k=3)
 
         # 2. Build system prompt
-        system_prompt = cls.build_system_prompt(student, weak_topics, chunks, modifier)
+        system_prompt = cls.build_system_prompt(student, weak_topics, chunks, modifier, target_lang)
 
         # 3. Call Gemini LLM if API Key is available
         llm_response = None
@@ -210,11 +211,11 @@ INSTRUCTIONS:
                         raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
                         llm_response = json.loads(raw_text)
             except Exception as e:
-                logger.warning(f"Gemini API call failed or timed out: {e}. Falling back to Grounded RAG Synthesizer.")
+                logger.warning(f"Gemini API call failed or timed out: {e}. Falling back to Multilingual Grounded RAG Synthesizer.")
 
         # 4. Fallback Synthesizer if LLM did not return structured JSON
         if not llm_response:
-            llm_response = cls._synthesize_grounded_fallback(user_message, chunks, weak_topics, modifier)
+            llm_response = cls._synthesize_grounded_fallback(user_message, chunks, weak_topics, modifier, target_lang)
 
         # Format sources citation list
         sources_list = [
@@ -240,41 +241,90 @@ INSTRUCTIONS:
         query: str,
         chunks: List[Dict[str, Any]],
         weak_topics: List[str],
-        modifier: Optional[str] = None
+        modifier: Optional[str] = None,
+        language: str = "en"
     ) -> Dict[str, Any]:
         """
-        High-quality grounded fallback engine that synthesizes RAG responses
-        directly from retrieved educational chunks if LLM API is unavailable.
+        Multilingual grounded fallback engine that synthesizes RAG responses
+        in English, Hindi (Devanagari), or Hinglish.
         """
+        cfg = get_language_config(language)
+        lang_code = cfg.code.lower()
+
         primary_chunk = chunks[0]["chunk_text"] if chunks else "Mathematics concepts form the foundation for solving problems."
         title = chunks[0]["title"] if chunks else "NCERT Mathematics"
 
-        explanation = f"Based on NCERT curriculum ({title}): {primary_chunk}"
-        if modifier == "simpler":
-            explanation = f"In simple terms: Think of this like balancing a scale. {primary_chunk}"
-        elif modifier == "deeper":
-            explanation = f"Mathematical Deep-Dive: {primary_chunk} This property holds strictly under real number arithmetic."
+        # ── Multilingual Explanation Synthesis ────────────────────────────────
+        if lang_code == "hi":
+            explanation = f"एनसीईआरटी पाठ्यक्रम ({title}) के अनुसार: {primary_chunk}"
+            if modifier == "simpler":
+                explanation = f"सरल शब्दों में: इसे तराजू को संतुलित करने की तरह समझें। {primary_chunk}"
+            elif modifier == "deeper":
+                explanation = f"गणितीय गहराई: {primary_chunk} यह नियम वास्तविक संख्याओं के लिए मान्य है।"
 
-        steps = [
-            f"1. Identify key variables and formulas from context: {title}.",
-            "2. Substitute given numerical values carefully into the formula.",
-            "3. Simplify step-by-step and verify that both sides of the equation remain equal."
-        ]
+            steps = [
+                f"1. एनसीईआरटी पाठ्यक्रम ({title}) से मुख्य सूत्र और चर पहचानें।",
+                "2. दिए गए समीकरण में संख्यात्मक मान रखें।",
+                "3. चरण-दर-चरण हल करें और दोनों पक्षों की जांच करें।"
+            ]
 
-        example = "Worked Example: If given 2x + 3 = 11, subtract 3 from both sides: 2x = 8 → x = 4."
-        if "quadratic" in query.lower() or "quadratic" in str(weak_topics).lower():
-            example = "Worked Example: For x² - 5x + 6 = 0, Discriminant D = (-5)² - 4(1)(6) = 25 - 24 = 1 > 0. Roots are x = (5 ± 1)/2 → x = 3 or x = 2."
-        elif "trigonometry" in query.lower() or "sin" in query.lower():
-            example = "Worked Example: In a right triangle with legs 3 and 4, hypotenuse = √(3² + 4²) = 5. Therefore sin(θ) = 4/5 and cos(θ) = 3/5."
-        elif "statistics" in query.lower() or "mean" in query.lower():
-            example = "Worked Example: Find mean of 4, 8, 12, 16, 20. Sum = 60, total n = 5 → Mean = 60/5 = 12."
-        elif "geometry" in query.lower() or "pythagorean" in query.lower():
-            example = "Worked Example: For a triangle with legs a = 6 cm and b = 8 cm, c² = 6² + 8² = 100 → c = 10 cm."
+            example = "उदाहरण: समीकरण 2x + 3 = 11 के लिए, दोनों पक्षों से 3 घटाएं: 2x = 8 → x = 4."
+            if "quadratic" in query.lower() or "द्विघात" in query.lower() or "quadratic" in str(weak_topics).lower():
+                example = "उदाहरण: समीकरण x² - 5x + 6 = 0 के लिए, विविक्तकर (Discriminant) D = (-5)² - 4(1)(6) = 1 > 0। मूल x = 3 और x = 2 हैं।"
+            elif "trigonometry" in query.lower() or "त्रिकोणमिति" in query.lower():
+                example = "उदाहरण: समकोण त्रिभुज में भुज 3 और 4 हैं, तो कर्ण = √(3² + 4²) = 5। इसलिए sin(θ) = 4/5 और cos(θ) = 3/5।"
 
-        follow_up = [
-            f"Would you like to try a practice problem on {query.split()[0] if query.split() else 'this topic'}?",
-            "Can I explain this using another real-world example?"
-        ]
+            follow_up = [
+                "क्या आप इस विषय पर एक अभ्यास प्रश्न हल करना चाहेंगे?",
+                "क्या मैं इसे एक और व्यावहारिक उदाहरण से समझाऊं?"
+            ]
+
+        elif lang_code in ["hi-en", "hinglish"]:
+            explanation = f"NCERT curriculum ({title}) ke anusar: {primary_chunk}"
+            if modifier == "simpler":
+                explanation = f"Simple terms me: Isko ek balance scale ki tarah samjho. {primary_chunk}"
+            elif modifier == "deeper":
+                explanation = f"Mathematical Deep-Dive: {primary_chunk} Ye property real numbers ke liye strictly hold karti hai."
+
+            steps = [
+                f"1. Context ({title}) se key variables aur formulas identify karo.",
+                "2. Given numerical values ko formula me carefully substitute karo.",
+                "3. Step-by-step simplify karke answer verify karo."
+            ]
+
+            example = "Worked Example: Given equation 2x + 3 = 11 me, dono sides 3 subtract karo: 2x = 8 → x = 4."
+            if "quadratic" in query.lower() or "quadratic" in str(weak_topics).lower():
+                example = "Worked Example: Equation x² - 5x + 6 = 0 ke liye, Discriminant D = (-5)² - 4(1)(6) = 1 > 0. Roots honge x = 3 aur x = 2."
+            elif "trigonometry" in query.lower() or "sin" in query.lower():
+                example = "Worked Example: Right triangle me legs 3 aur 4 hain, hypotenuse = √(3² + 4²) = 5. Therefore sin(θ) = 4/5 aur cos(θ) = 3/5."
+
+            follow_up = [
+                "Kya aap is topic par ek practice question try karna chahoge?",
+                "Kya main isko ek aur simple example se samjhao?"
+            ]
+
+        else:
+            # Standard English Fallback
+            explanation = f"Based on NCERT curriculum ({title}): {primary_chunk}"
+            if modifier == "simpler":
+                explanation = f"In simple terms: Think of this like balancing a scale. {primary_chunk}"
+            elif modifier == "deeper":
+                explanation = f"Mathematical Deep-Dive: {primary_chunk} This property holds strictly under real number arithmetic."
+
+            steps = [
+                f"1. Identify key variables and formulas from context: {title}.",
+                "2. Substitute given numerical values carefully into the formula.",
+                "3. Simplify step-by-step and verify that both sides of the equation remain equal."
+            ]
+
+            example = "Worked Example: If given 2x + 3 = 11, subtract 3 from both sides: 2x = 8 → x = 4."
+            if "quadratic" in query.lower() or "quadratic" in str(weak_topics).lower():
+                example = "Worked Example: For x² - 5x + 6 = 0, Discriminant D = (-5)² - 4(1)(6) = 25 - 24 = 1 > 0. Roots are x = (5 ± 1)/2 → x = 3 or x = 2."
+
+            follow_up = [
+                "Would you like to try a practice problem on this topic?",
+                "Can I explain this using another real-world example?"
+            ]
 
         return {
             "explanation": explanation,
