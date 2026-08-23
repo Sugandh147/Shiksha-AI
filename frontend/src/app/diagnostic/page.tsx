@@ -47,7 +47,8 @@ function DiagnosticQuizContent() {
     setLoading(true);
     setError("");
     try {
-      const res = await api.post<DiagnosticStartResponse>("/diagnostic/start");
+      const grade = user?.student_profile?.grade_level || 10;
+      const res = await api.post<DiagnosticStartResponse>("/diagnostic/start", { grade_level: grade });
       setQuizData(res);
     } catch (err: unknown) {
       const msg =

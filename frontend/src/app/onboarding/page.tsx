@@ -24,7 +24,7 @@ const EDUCATION_LEVELS = [
   { id: "Higher Secondary", label: "Higher Secondary", desc: "Classes 11 & 12" },
 ];
 
-const GRADES = [6, 7, 8, 9, 10, 11, 12];
+const GRADES = [4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 const SUBJECT_OPTIONS = [
   { id: "Mathematics", label: "Mathematics", icon: "📐", color: "#6366f1" },

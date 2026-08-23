@@ -662,7 +662,7 @@ function StudentDashboardContent() {
             {/* Avatar */}
             <div style={S.avatar}>{initial}</div>
             <h2 style={S.greeting}>Hello, {firstName} 👋</h2>
-            <p style={S.greetingSub}>Class 10 • Student</p>
+            <p style={S.greetingSub}>Class {user?.student_profile?.grade_level || 10} • Student</p>
 
             {/* ── LEARN ── */}
             <div style={S.navLabel}>LEARN</div>

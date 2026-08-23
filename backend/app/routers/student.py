@@ -237,14 +237,25 @@ def get_student_dashboard(
         db.commit()
         db.refresh(profile)
 
-    # 1. Fetch Skill Masteries
+    student_grade = profile.grade_level if (profile and profile.grade_level) else 10
+
+    # 1. Fetch Skill Masteries for student's grade level
     masteries = (
         db.query(SkillMastery, Topic, Subject)
         .join(Topic, SkillMastery.topic_id == Topic.id)
         .join(Subject, Topic.subject_id == Subject.id)
-        .filter(SkillMastery.student_id == current_user.id)
+        .filter(SkillMastery.student_id == current_user.id, Topic.grade_level == student_grade)
         .all()
     )
+
+    if not masteries:
+        masteries = (
+            db.query(SkillMastery, Topic, Subject)
+            .join(Topic, SkillMastery.topic_id == Topic.id)
+            .join(Subject, Topic.subject_id == Subject.id)
+            .filter(SkillMastery.student_id == current_user.id)
+            .all()
+        )
 
     if masteries:
         total_score = sum(m.SkillMastery.mastery_score for m in masteries)
@@ -267,16 +278,23 @@ def get_student_dashboard(
                 )
             )
 
-    # If no weak topic < 70, take lowest 3 topics as practice focus
-    if not weak_items and masteries:
-        for m in sorted_masteries[:3]:
+    # If no weak topic < 70, take grade-level topics from DB
+    if not weak_items:
+        grade_topics = (
+            db.query(Topic, Subject)
+            .join(Subject, Topic.subject_id == Subject.id)
+            .filter(Topic.grade_level == student_grade)
+            .limit(3)
+            .all()
+        )
+        for t, s in grade_topics:
             weak_items.append(
                 WeakTopicItem(
-                    topic_id=m.Topic.id,
-                    topic_name=m.Topic.name,
-                    subject_name=m.Subject.name,
-                    mastery_score=m.SkillMastery.mastery_score,
-                    current_level=m.SkillMastery.current_level.value if hasattr(m.SkillMastery.current_level, "value") else str(m.SkillMastery.current_level),
+                    topic_id=t.id,
+                    topic_name=t.name,
+                    subject_name=s.name,
+                    mastery_score=52.0,
+                    current_level="medium",
                 )
             )
 

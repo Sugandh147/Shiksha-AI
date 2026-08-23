@@ -82,38 +82,52 @@ def generate_practice_set(
     # Query practice questions for target topic & grade
     questions = (
         db.query(Question)
-        .filter(Question.topic_id == target_topic.id)
+        .filter(Question.topic_id == target_topic.id, Question.grade_level == student_grade)
         .all()
     )
 
     if not questions:
-        # Fallback to questions for same grade level
+        questions = (
+            db.query(Question)
+            .filter(Question.topic_id == target_topic.id)
+            .all()
+        )
+
+    if not questions:
         questions = db.query(Question).filter(Question.grade_level == student_grade).all()
 
-    if not questions:
-        questions = db.query(Question).all()
-
-    if not questions:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No practice questions found for topic {target_topic.name}.",
-        )
-
-    # Limit to requested count
     count = payload.count or 5
-    selected_qs = questions[:count]
+    q_out: List[PracticeQuestionOut] = []
 
-    q_out = [
-        PracticeQuestionOut(
-            question_id=q.id,
-            question_text=q.question_text,
-            options=q.options or {},
-            topic_id=q.topic_id,
-            topic_name=target_topic.name,
-            difficulty=q.difficulty.value if hasattr(q.difficulty, "value") else str(q.difficulty),
-        )
-        for q in selected_qs
-    ]
+    if questions:
+        selected_qs = questions[:count]
+        for q in selected_qs:
+            q_out.append(
+                PracticeQuestionOut(
+                    question_id=q.id,
+                    question_text=q.question_text,
+                    options=q.options or {},
+                    topic_id=q.topic_id,
+                    topic_name=target_topic.name,
+                    difficulty=q.difficulty.value if hasattr(q.difficulty, "value") else str(q.difficulty),
+                )
+            )
+
+    # Fallback to strictly grade-matched question bank if DB has no questions for this grade
+    if not q_out:
+        from app.core.question_bank import get_grade_questions
+        bank_qs = get_grade_questions(student_grade)
+        for idx, bq in enumerate(bank_qs[:count], start=2000 * student_grade):
+            q_out.append(
+                PracticeQuestionOut(
+                    question_id=idx,
+                    question_text=bq["question_text"],
+                    options=bq["options"],
+                    topic_id=target_topic.id,
+                    topic_name=bq["topic_name"],
+                    difficulty=bq["difficulty"],
+                )
+            )
 
     return PracticeGenerateResponse(
         session_topic_name=target_topic.name,

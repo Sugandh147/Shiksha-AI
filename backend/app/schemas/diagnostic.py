@@ -17,6 +17,11 @@ class QuestionOutForDiagnostic(BaseModel):
     difficulty: str
 
 
+class DiagnosticStartRequest(BaseModel):
+    grade_level: Optional[int] = Field(None, description="Target class grade level e.g. 4, 6, 8, 10")
+    subject_id: Optional[int] = Field(None, description="Optional subject ID")
+
+
 class DiagnosticStartResponse(BaseModel):
     total_questions: int
     subject_name: str = "Mathematics"

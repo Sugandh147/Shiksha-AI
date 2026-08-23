@@ -29,60 +29,80 @@ router = APIRouter(prefix="/diagnostic", tags=["Diagnostic Assessment"])
 
 @router.post("/start", response_model=DiagnosticStartResponse)
 def start_diagnostic_quiz(
+    payload: Optional[DiagnosticStartRequest] = None,
     grade_level: Optional[int] = None,
     subject_id: Optional[int] = None,
     current_user: User = Depends(require_student),
     db: Session = Depends(get_db),
 ):
     """
-    Fetch diagnostic assessment questions customized for the student's Class/Grade and Subject.
+    Fetch diagnostic assessment questions strictly customized for the student's Class/Grade level.
+    Guarantees Class 10 gets Class 10 questions, Class 4 gets Class 4 questions, etc.
     """
-    student_grade = grade_level or (current_user.student_profile.grade_level if current_user.student_profile else 8)
+    target_grade = 10
+    if payload and payload.grade_level:
+        target_grade = payload.grade_level
+    elif grade_level:
+        target_grade = grade_level
+    elif current_user.student_profile and current_user.student_profile.grade_level:
+        target_grade = current_user.student_profile.grade_level
 
-    query = db.query(Question).filter(Question.is_diagnostic == True)
+    target_subject_id = payload.subject_id if (payload and payload.subject_id) else subject_id
 
-    if subject_id:
-        query = query.filter(Question.subject_id == subject_id)
+    query = db.query(Question).filter(
+        Question.is_diagnostic == True,
+        Question.grade_level == target_grade
+    )
 
-    # 1. Filter by student's grade level
-    questions = query.filter(Question.grade_level == student_grade).all()
+    if target_subject_id:
+        query = query.filter(Question.subject_id == target_subject_id)
 
-    if not questions:
-        # Fallback to any diagnostic questions
-        questions = query.all()
+    db_questions = query.all()
 
-    if not questions:
-        questions = db.query(Question).filter(Question.is_diagnostic == True).all()
+    # If DB questions for target_grade are found, use them
+    q_list: List[QuestionOutForDiagnostic] = []
+    topics_set = set()
 
-    if not questions:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No diagnostic questions found in the database.",
-        )
+    if db_questions:
+        for q in db_questions:
+            top_name = q.topic.name if q.topic else f"Class {target_grade} Concepts"
+            topics_set.add(top_name)
+            q_list.append(
+                QuestionOutForDiagnostic(
+                    id=q.id,
+                    question_text=q.question_text,
+                    options=q.options or {},
+                    topic_id=q.topic_id,
+                    topic_name=top_name,
+                    difficulty=q.difficulty.value if hasattr(q.difficulty, "value") else str(q.difficulty),
+                )
+            )
 
-    # Get subject name
-    subject_name = "Mathematics"
-    if questions[0].subject:
-        subject_name = questions[0].subject.name
+    # Fallback to strictly grade-matched questions from grade question bank (NEVER mix other grades)
+    if not q_list:
+        from app.core.question_bank import get_grade_questions
+        bank_qs = get_grade_questions(target_grade)
+        for idx, bq in enumerate(bank_qs, start=1000 * target_grade):
+            topics_set.add(bq["topic_name"])
+            q_list.append(
+                QuestionOutForDiagnostic(
+                    id=idx,
+                    question_text=bq["question_text"],
+                    options=bq["options"],
+                    topic_id=1,
+                    topic_name=bq["topic_name"],
+                    difficulty=bq["difficulty"],
+                )
+            )
 
-    topics_covered = sorted(list(set(q.topic.name for q in questions if q.topic)))
-
-    q_list = [
-        QuestionOutForDiagnostic(
-            id=q.id,
-            question_text=q.question_text,
-            options=q.options or {},
-            topic_id=q.topic_id,
-            topic_name=q.topic.name if q.topic else subject_name,
-            difficulty=q.difficulty.value if hasattr(q.difficulty, "value") else str(q.difficulty),
-        )
-        for q in questions
-    ]
+    subject_name = f"Class {target_grade} Curriculum"
+    if db_questions and db_questions[0].subject:
+        subject_name = db_questions[0].subject.name
 
     return DiagnosticStartResponse(
         total_questions=len(q_list),
         subject_name=subject_name,
-        topics_covered=topics_covered,
+        topics_covered=sorted(list(topics_set)),
         questions=q_list,
     )
 
