@@ -116,6 +116,9 @@ class StudentProfile(Base):
     diagnostic_completed = Column(Boolean, default=False)
     current_streak_days  = Column(Integer, default=0)
     total_xp             = Column(Integer, default=0)            # Gamification points
+    education_level      = Column(String(100), nullable=True)
+    preferred_subjects   = Column(JSON, nullable=True)           # List of selected subjects e.g. ["Mathematics", "Science"]
+    learning_goal        = Column(String(200), nullable=True)    # e.g. "Score high in school exams"
     onboarding_completed = Column(Boolean, default=False)
     created_at           = Column(DateTime(timezone=True), server_default=func.now())
 

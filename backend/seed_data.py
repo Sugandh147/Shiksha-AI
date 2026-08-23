@@ -113,8 +113,11 @@ def seed_students(db: Session) -> list[User]:
         profile = StudentProfile(
             user_id=student.id,
             grade_level=grade,
+            education_level="Middle School",
             school_name="Delhi Public School, Sector 12",
             learning_style=style,
+            preferred_subjects=["Mathematics", "Science"],
+            learning_goal="Master core concepts and excel in exams",
             diagnostic_completed=True,
             current_streak_days=rng.randint(1, 12),
             total_xp=rng.randint(100, 1500),
@@ -157,10 +160,11 @@ def seed_subjects_and_topics(db: Session) -> dict:
             "icon": "📐",
             "color": "#6366f1",
             "topics": [
-                ("Rational Numbers",         "Properties and operations on rational numbers", 0),
-                ("Linear Equations",         "Solving linear equations in one variable",       1),
-                ("Mensuration",              "Area and volume of 2D and 3D shapes",            2),
-                ("Data Handling",            "Graphs, mean, median, mode and probability",     3),
+                ("Algebra",               "Linear expressions, simplification, and polynomial factoring", 0),
+                ("Quadratic Equations",   "Roots, factorization, discriminant, and quadratic formula",    1),
+                ("Trigonometry",          "Trigonometric ratios, right triangles, and identities",        2),
+                ("Geometry",              "Angles, triangles, Pythagorean theorem, and circle properties",3),
+                ("Statistics",            "Mean, median, mode, data interpretation, and probability",     4),
             ],
         },
         {
@@ -227,72 +231,130 @@ def seed_subjects_and_topics(db: Session) -> dict:
 def seed_questions(db: Session, subjects: dict, topics: dict) -> list[Question]:
     print("  ➤ Creating questions...")
     questions_data = [
-        # ── Mathematics: Rational Numbers ─────────────────────────────────────
+        # ── Mathematics: Algebra ──────────────────────────────────────────────
         {
-            "subject": "Mathematics", "topic": "Rational Numbers",
+            "subject": "Mathematics", "topic": "Algebra",
             "difficulty": DifficultyLevel.easy, "is_diagnostic": True,
-            "question_text": "Which of the following is a rational number?",
-            "options": {"A": "√2", "B": "π", "C": "3/4", "D": "√3"},
-            "correct_answer": "C",
-            "explanation": "3/4 can be expressed as p/q where both p=3 and q=4 are integers and q≠0. √2, π, and √3 are irrational numbers."
+            "question_text": "Simplify the expression: 3x + 5x - 2x",
+            "options": {"A": "6x", "B": "10x", "C": "6x²", "D": "8x"},
+            "correct_answer": "A",
+            "explanation": "Combine like terms: (3 + 5 - 2)x = 6x."
         },
         {
-            "subject": "Mathematics", "topic": "Rational Numbers",
-            "difficulty": DifficultyLevel.medium,
-            "question_text": "What is the sum of -3/7 and 2/7?",
-            "options": {"A": "5/7", "B": "-1/7", "C": "1/7", "D": "-5/7"},
+            "subject": "Mathematics", "topic": "Algebra",
+            "difficulty": DifficultyLevel.medium, "is_diagnostic": True,
+            "question_text": "If 4(2y - 3) = 20, what is the value of y?",
+            "options": {"A": "3", "B": "4", "C": "5", "D": "6"},
             "correct_answer": "B",
-            "explanation": "-3/7 + 2/7 = (-3+2)/7 = -1/7. When adding fractions with the same denominator, simply add the numerators."
+            "explanation": "Divide both sides by 4: 2y - 3 = 5 → 2y = 8 → y = 4."
         },
         {
-            "subject": "Mathematics", "topic": "Rational Numbers",
-            "difficulty": DifficultyLevel.hard,
-            "question_text": "Find the rational number between 1/4 and 1/2 using the mean method.",
-            "options": {"A": "1/3", "B": "3/8", "C": "5/8", "D": "2/3"},
+            "subject": "Mathematics", "topic": "Algebra",
+            "difficulty": DifficultyLevel.hard, "is_diagnostic": True,
+            "question_text": "Factorize completely: x² - 9y²",
+            "options": {"A": "(x - 3y)²", "B": "(x + 3y)(x - 3y)", "C": "(x + 9y)(x - y)", "D": "(x - 9y)(x + y)"},
             "correct_answer": "B",
-            "explanation": "Mean method: (1/4 + 1/2) / 2 = (1/4 + 2/4) / 2 = (3/4) / 2 = 3/8. So 3/8 lies between 1/4 and 1/2."
+            "explanation": "Difference of squares formula: a² - b² = (a+b)(a-b). Here a=x and b=3y."
         },
-        # ── Mathematics: Linear Equations ─────────────────────────────────────
+        # ── Mathematics: Quadratic Equations ──────────────────────────────────
         {
-            "subject": "Mathematics", "topic": "Linear Equations",
+            "subject": "Mathematics", "topic": "Quadratic Equations",
             "difficulty": DifficultyLevel.easy, "is_diagnostic": True,
-            "question_text": "Solve for x: 2x + 3 = 7",
-            "options": {"A": "x = 1", "B": "x = 2", "C": "x = 3", "D": "x = 5"},
+            "question_text": "What are the roots of the quadratic equation x² - 5x + 6 = 0?",
+            "options": {"A": "x = 1, 6", "B": "x = 2, 3", "C": "x = -2, -3", "D": "x = 0, 5"},
             "correct_answer": "B",
-            "explanation": "2x + 3 = 7 → 2x = 7 - 3 = 4 → x = 4/2 = 2. Always perform the same operation on both sides."
+            "explanation": "Factorize: (x - 2)(x - 3) = 0 → x = 2 or x = 3."
         },
         {
-            "subject": "Mathematics", "topic": "Linear Equations",
-            "difficulty": DifficultyLevel.medium,
-            "question_text": "If 5(x-2) = 3(x+4), what is x?",
-            "options": {"A": "x = 7", "B": "x = 9", "C": "x = 11", "D": "x = 13"},
-            "correct_answer": "C",
-            "explanation": "5x - 10 = 3x + 12 → 5x - 3x = 12 + 10 → 2x = 22 → x = 11. Expand brackets, then collect like terms."
+            "subject": "Mathematics", "topic": "Quadratic Equations",
+            "difficulty": DifficultyLevel.medium, "is_diagnostic": True,
+            "question_text": "Calculate the discriminant (D = b² - 4ac) for the quadratic equation 2x² - 4x + 2 = 0.",
+            "options": {"A": "0", "B": "8", "C": "16", "D": "-8"},
+            "correct_answer": "A",
+            "explanation": "D = (-4)² - 4(2)(2) = 16 - 16 = 0. Real and equal roots."
         },
         {
-            "subject": "Mathematics", "topic": "Linear Equations",
-            "difficulty": DifficultyLevel.hard,
-            "question_text": "The sum of two consecutive even integers is 46. What is the larger integer?",
-            "options": {"A": "20", "B": "22", "C": "24", "D": "26"},
-            "correct_answer": "C",
-            "explanation": "Let n and n+2 be the even integers. n + (n+2) = 46 → 2n + 2 = 46 → n = 22. Larger integer = 22 + 2 = 24."
+            "subject": "Mathematics", "topic": "Quadratic Equations",
+            "difficulty": DifficultyLevel.hard, "is_diagnostic": True,
+            "question_text": "If one root of x² + kx - 12 = 0 is 3, what is the value of k?",
+            "options": {"A": "-1", "B": "1", "C": "4", "D": "-4"},
+            "correct_answer": "B",
+            "explanation": "Substitute x=3: 3² + 3k - 12 = 0 → 9 + 3k - 12 = 0 → 3k = 3 → k = 1."
         },
-        # ── Mathematics: Mensuration ───────────────────────────────────────────
+        # ── Mathematics: Trigonometry ─────────────────────────────────────────
         {
-            "subject": "Mathematics", "topic": "Mensuration",
+            "subject": "Mathematics", "topic": "Trigonometry",
             "difficulty": DifficultyLevel.easy, "is_diagnostic": True,
-            "question_text": "What is the area of a rectangle with length 8 cm and breadth 5 cm?",
-            "options": {"A": "13 cm²", "B": "26 cm²", "C": "40 cm²", "D": "80 cm²"},
-            "correct_answer": "C",
-            "explanation": "Area of rectangle = length × breadth = 8 × 5 = 40 cm²."
+            "question_text": "In a right-angled triangle, how is sin(θ) defined?",
+            "options": {"A": "Adjacent / Hypotenuse", "B": "Opposite / Hypotenuse", "C": "Opposite / Adjacent", "D": "Hypotenuse / Opposite"},
+            "correct_answer": "B",
+            "explanation": "Sine ratio is Opposite side over Hypotenuse (SOH)."
         },
         {
-            "subject": "Mathematics", "topic": "Mensuration",
-            "difficulty": DifficultyLevel.medium,
-            "question_text": "The area of a circle with radius 7 cm is (use π = 22/7):",
-            "options": {"A": "44 cm²", "B": "154 cm²", "C": "176 cm²", "D": "308 cm²"},
+            "subject": "Mathematics", "topic": "Trigonometry",
+            "difficulty": DifficultyLevel.medium, "is_diagnostic": True,
+            "question_text": "What is the value of sin²(30°) + cos²(30°)?",
+            "options": {"A": "0", "B": "1/2", "C": "1", "D": "√3/2"},
+            "correct_answer": "C",
+            "explanation": "By the Pythagorean trigonometric identity, sin²(θ) + cos²(θ) = 1 for any angle θ."
+        },
+        {
+            "subject": "Mathematics", "topic": "Trigonometry",
+            "difficulty": DifficultyLevel.hard, "is_diagnostic": True,
+            "question_text": "If tan(θ) = 4/3 in a right triangle, what is cos(θ)?",
+            "options": {"A": "3/5", "B": "4/5", "C": "5/3", "D": "3/4"},
+            "correct_answer": "A",
+            "explanation": "Opposite=4, Adjacent=3 → Hypotenuse = √(4²+3²) = 5. Therefore cos(θ) = Adjacent/Hypotenuse = 3/5."
+        },
+        # ── Mathematics: Geometry ─────────────────────────────────────────────
+        {
+            "subject": "Mathematics", "topic": "Geometry",
+            "difficulty": DifficultyLevel.easy, "is_diagnostic": True,
+            "question_text": "What is the sum of all interior angles in any triangle?",
+            "options": {"A": "90°", "B": "180°", "C": "270°", "D": "360°"},
             "correct_answer": "B",
-            "explanation": "Area = πr² = (22/7) × 7² = (22/7) × 49 = 22 × 7 = 154 cm²."
+            "explanation": "The sum of interior angles in any triangle is always 180 degrees."
+        },
+        {
+            "subject": "Mathematics", "topic": "Geometry",
+            "difficulty": DifficultyLevel.medium, "is_diagnostic": True,
+            "question_text": "In a right-angled triangle, the two perpendicular legs measure 6 cm and 8 cm. What is the hypotenuse?",
+            "options": {"A": "9 cm", "B": "10 cm", "C": "12 cm", "D": "14 cm"},
+            "correct_answer": "B",
+            "explanation": "Pythagorean Theorem: c² = 6² + 8² = 36 + 64 = 100 → c = √100 = 10 cm."
+        },
+        {
+            "subject": "Mathematics", "topic": "Geometry",
+            "difficulty": DifficultyLevel.hard, "is_diagnostic": True,
+            "question_text": "A circle has a radius of 7 cm. What is its circumference? (Use π = 22/7)",
+            "options": {"A": "22 cm", "B": "44 cm", "C": "154 cm", "D": "88 cm"},
+            "correct_answer": "B",
+            "explanation": "Circumference = 2πr = 2 × (22/7) × 7 = 44 cm."
+        },
+        # ── Mathematics: Statistics ───────────────────────────────────────────
+        {
+            "subject": "Mathematics", "topic": "Statistics",
+            "difficulty": DifficultyLevel.easy, "is_diagnostic": True,
+            "question_text": "Find the arithmetic mean of the numbers: 4, 8, 12, 16, 20.",
+            "options": {"A": "10", "B": "12", "C": "14", "D": "16"},
+            "correct_answer": "B",
+            "explanation": "Mean = (4 + 8 + 12 + 16 + 20) / 5 = 60 / 5 = 12."
+        },
+        {
+            "subject": "Mathematics", "topic": "Statistics",
+            "difficulty": DifficultyLevel.medium, "is_diagnostic": True,
+            "question_text": "What is the median of the data set: 3, 7, 2, 9, 5, 8, 1?",
+            "options": {"A": "4", "B": "5", "C": "6", "D": "7"},
+            "correct_answer": "B",
+            "explanation": "Sort data: 1, 2, 3, 5, 7, 8, 9. The middle element (4th value) is 5."
+        },
+        {
+            "subject": "Mathematics", "topic": "Statistics",
+            "difficulty": DifficultyLevel.hard, "is_diagnostic": True,
+            "question_text": "A bag contains 3 red balls and 7 blue balls. What is the probability of drawing a red ball?",
+            "options": {"A": "3/7", "B": "3/10", "C": "7/10", "D": "1/3"},
+            "correct_answer": "B",
+            "explanation": "Total balls = 3 + 7 = 10. Probability = Favorable outcomes / Total outcomes = 3/10."
         },
         # ── Science: Force and Pressure ────────────────────────────────────────
         {
@@ -562,43 +624,95 @@ def seed_documents(db: Session, subjects: dict) -> None:
     math_subject = subjects["Mathematics"]
     science_subject = subjects["Science"]
 
-    doc1 = Document(
-        title="NCERT Mathematics Class 8 — Chapter 1: Rational Numbers",
+    # ── Document 1: Mathematics - Algebra & Linear Equations ──────────
+    doc_alg = Document(
+        title="NCERT Mathematics Class 8/9 — Algebra & Polynomial Factoring",
         subject_id=math_subject.id,
         grade_level=8,
-        source_url="https://ncert.nic.in/textbook.php?hemh1=1-1",
-        author="NCERT",
+        source_url="https://ncert.nic.in/textbook.php?gemh1=2",
+        author="NCERT Educational Repository",
     )
-    db.add(doc1)
+    db.add(doc_alg)
     db.flush()
-
-    math_chunks = [
-        "A rational number is defined as a number that can be expressed in the form p/q, where p and q are integers and q is not equal to zero. Examples include 1/2, -3/4, 7/1 (which equals 7), and 0/5 (which equals 0). All integers are rational numbers because any integer n can be written as n/1.",
-        "Rational numbers are closed under addition, subtraction, and multiplication. This means if you add, subtract, or multiply any two rational numbers, the result is always a rational number. However, division by zero is not defined and is excluded.",
-        "The number line representation: Rational numbers can be located on a number line. Between any two rational numbers, there exist infinitely many rational numbers. This property is called density of rational numbers.",
-        "Properties of rational numbers include: Commutativity (a+b = b+a), Associativity ((a+b)+c = a+(b+c)), Distributivity (a×(b+c) = a×b + a×c), and the existence of additive identity (0) and multiplicative identity (1).",
+    alg_chunks = [
+        "Algebraic Expressions & Terms: An algebraic expression is formed from variables (like x, y, z) and constants combined using operations (+, -, ×, ÷). Like terms contain the exact same variables raised to the same powers, for example 3x and -5x. Only like terms can be added or subtracted.",
+        "Solving Linear Equations in One Variable: A linear equation has an equality sign (=) and degree 1. To solve 2x + 3 = 11, isolate the variable x by performing identical inverse operations on both sides: 2x = 11 - 3 = 8, so x = 8/2 = 4.",
+        "Polynomial Factoring & Identities: Important algebraic identities include: (1) (a+b)² = a² + 2ab + b²; (2) (a-b)² = a² - 2ab + b²; (3) Difference of Squares: a² - b² = (a+b)(a-b). To factorize x² - 9y², recognize it as x² - (3y)² = (x + 3y)(x - 3y)."
     ]
-    for i, chunk_text in enumerate(math_chunks):
-        db.add(DocumentChunk(document_id=doc1.id, chunk_index=i, chunk_text=chunk_text))
+    for i, ctext in enumerate(alg_chunks):
+        db.add(DocumentChunk(document_id=doc_alg.id, chunk_index=i, chunk_text=ctext))
 
-    doc2 = Document(
-        title="NCERT Science Class 8 — Chapter 11: Force and Pressure",
-        subject_id=science_subject.id,
-        grade_level=8,
-        source_url="https://ncert.nic.in/textbook.php?hesc1=11-1",
-        author="NCERT",
+    # ── Document 2: Mathematics - Quadratic Equations ─────────────────
+    doc_quad = Document(
+        title="NCERT Mathematics Class 10 — Chapter 4: Quadratic Equations",
+        subject_id=math_subject.id,
+        grade_level=10,
+        source_url="https://ncert.nic.in/textbook.php?jemh1=4",
+        author="NCERT Educational Repository",
     )
-    db.add(doc2)
+    db.add(doc_quad)
     db.flush()
-
-    science_chunks = [
-        "A force is a push or a pull acting on an object. Forces arise due to interaction between objects. When two objects interact, they exert forces on each other. A force can change the state of motion of an object, its direction, or its shape.",
-        "Pressure is defined as the force acting per unit area. The formula is: Pressure = Force / Area (P = F/A). The SI unit of pressure is Pascal (Pa), where 1 Pa = 1 N/m². Pressure increases when force increases or when area decreases.",
-        "Atmospheric pressure: The air around us exerts pressure on all objects. At sea level, atmospheric pressure is approximately 101,325 Pa (1 atm). This pressure decreases with altitude. We don't feel this pressure because our bodies are adapted to it.",
-        "Applications of pressure in daily life: Knife blades are sharp (small area → high pressure for cutting). Dam walls are thicker at the bottom (water pressure increases with depth). Camels have flat broad feet (large area → less pressure on soft sand).",
+    quad_chunks = [
+        "Quadratic Equations Standard Form: A quadratic equation in variable x is an equation of the form ax² + bx + c = 0, where a, b, c are real numbers and a ≠ 0. The values of x that satisfy the equation are called the roots or zeros.",
+        "Solving by Factorization & Quadratic Formula: Roots can be found by middle-term splitting or using the Quadratic Formula: x = (-b ± √(b² - 4ac)) / (2a). For example, for x² - 5x + 6 = 0, a=1, b=-5, c=6 → x = (5 ± √(25 - 24))/2 = (5 ± 1)/2 → x = 3 or x = 2.",
+        "Discriminant and Nature of Roots: The expression D = b² - 4ac is called the Discriminant. (1) If D > 0, the equation has two distinct real roots. (2) If D = 0, the equation has two equal real roots: x = -b/(2a). (3) If D < 0, the equation has no real roots (complex roots)."
     ]
-    for i, chunk_text in enumerate(science_chunks):
-        db.add(DocumentChunk(document_id=doc2.id, chunk_index=i, chunk_text=chunk_text))
+    for i, ctext in enumerate(quad_chunks):
+        db.add(DocumentChunk(document_id=doc_quad.id, chunk_index=i, chunk_text=ctext))
+
+    # ── Document 3: Mathematics - Trigonometry ────────────────────────
+    doc_trig = Document(
+        title="NCERT Mathematics Class 10 — Chapter 8: Introduction to Trigonometry",
+        subject_id=math_subject.id,
+        grade_level=10,
+        source_url="https://ncert.nic.in/textbook.php?jemh1=8",
+        author="NCERT Educational Repository",
+    )
+    db.add(doc_trig)
+    db.flush()
+    trig_chunks = [
+        "Trigonometric Ratios in Right Triangles: For an acute angle θ in a right-angled triangle: sin(θ) = Opposite/Hypotenuse, cos(θ) = Adjacent/Hypotenuse, tan(θ) = Opposite/Adjacent = sin(θ)/cos(θ). Reciprocals are cosec(θ) = 1/sin(θ), sec(θ) = 1/cos(θ), cot(θ) = 1/tan(θ).",
+        "Fundamental Pythagorean Identity: In any right triangle with hypotenuse c and legs a, b: a² + b² = c². Dividing by c² yields the core identity: sin²(θ) + cos²(θ) = 1. Other key identities include 1 + tan²(θ) = sec²(θ) and 1 + cot²(θ) = cosec²(θ).",
+        "Trigonometric Values for Specific Angles: Key values include: sin(30°) = 1/2, sin(45°) = 1/√2, sin(60°) = √3/2, sin(90°) = 1. Cosine values run in reverse: cos(30°) = √3/2, cos(45°) = 1/√2, cos(60°) = 1/2, cos(90°) = 0. tan(45°) = 1."
+    ]
+    for i, ctext in enumerate(trig_chunks):
+        db.add(DocumentChunk(document_id=doc_trig.id, chunk_index=i, chunk_text=ctext))
+
+    # ── Document 4: Mathematics - Geometry & Triangles ───────────────
+    doc_geo = Document(
+        title="NCERT Mathematics Class 9/10 — Geometry, Triangles & Circles",
+        subject_id=math_subject.id,
+        grade_level=9,
+        source_url="https://ncert.nic.in/textbook.php?iemh1=6",
+        author="NCERT Educational Repository",
+    )
+    db.add(doc_geo)
+    db.flush()
+    geo_chunks = [
+        "Triangle Properties & Angle Sum Theorem: The sum of the interior angles of any triangle is always 180 degrees (∠A + ∠B + ∠C = 180°). An exterior angle of a triangle equals the sum of its two opposite interior angles.",
+        "Pythagorean Theorem: In a right-angled triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides: c² = a² + b². If legs are 6 cm and 8 cm, hypotenuse c = √(36 + 64) = √100 = 10 cm.",
+        "Circle Formulas & Tangents: For a circle of radius r: Circumference C = 2πr; Area A = πr². A tangent to a circle is a line that intersects the circle at exactly one point, and is perpendicular to the radius at the point of contact."
+    ]
+    for i, ctext in enumerate(geo_chunks):
+        db.add(DocumentChunk(document_id=doc_geo.id, chunk_index=i, chunk_text=ctext))
+
+    # ── Document 5: Mathematics - Statistics & Probability ────────────
+    doc_stat = Document(
+        title="NCERT Mathematics Class 9/10 — Statistics & Basic Probability",
+        subject_id=math_subject.id,
+        grade_level=9,
+        source_url="https://ncert.nic.in/textbook.php?iemh1=14",
+        author="NCERT Educational Repository",
+    )
+    db.add(doc_stat)
+    db.flush()
+    stat_chunks = [
+        "Measures of Central Tendency — Mean: The arithmetic mean (average) x̄ is the sum of all observations divided by the total number of observations: x̄ = (∑ x_i) / n. For data 4, 8, 12, 16, 20: Mean = 60/5 = 12.",
+        "Median and Mode: The Median is the middle value when data is arranged in ascending order. If n is odd, Median is the ((n+1)/2)th term. The Mode is the value that appears most frequently in a dataset.",
+        "Theoretical Probability: The probability of an event E, P(E) = (Number of outcomes favorable to E) / (Total number of possible outcomes). The probability of an event ranges between 0 and 1 (0 ≤ P(E) ≤ 1). If a bag has 3 red and 7 blue balls, P(Red) = 3/10."
+    ]
+    for i, ctext in enumerate(stat_chunks):
+        db.add(DocumentChunk(document_id=doc_stat.id, chunk_index=i, chunk_text=ctext))
 
     db.flush()
     print(f"    ✓ Created 2 documents with chunks")

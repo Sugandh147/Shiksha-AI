@@ -17,6 +17,7 @@ export interface User {
   preferred_language: string;
   avatar_url?: string;
   is_active: boolean;
+  onboarding_completed?: boolean;
   created_at: string;
 }
 
@@ -46,18 +47,102 @@ export interface AuthResponse {
   user: User;
 }
 
-// ── Student Profile ───────────────────────────────────────────────────────────
+// ── Student Onboarding & Profile ───────────────────────────────────────────────
+
+export interface StudentOnboardingRequest {
+  name: string;
+  education_level: string;
+  class_grade: number;
+  subjects: string[];
+  preferred_language: string;
+  learning_goal: string;
+}
 
 export interface StudentProfile {
   id: number;
   user_id: number;
+  full_name: string;
+  email: string;
   grade_level: number;
+  education_level?: string;
   school_name?: string;
-  learning_style: string;
+  learning_style?: string;
+  preferred_subjects?: string[];
+  learning_goal?: string;
   diagnostic_completed: boolean;
   current_streak_days: number;
   total_xp: number;
   onboarding_completed: boolean;
+  created_at?: string;
+}
+
+// ── Teacher Profile & Roster ──────────────────────────────────────────────────
+
+export interface TeacherProfile {
+  id: number;
+  user_id: number;
+  full_name: string;
+  email: string;
+  school_name?: string;
+  subject_specialization?: string;
+  years_experience: number;
+}
+
+export interface TeacherStudent {
+  student_id: number;
+  full_name: string;
+  email: string;
+  grade_level: number;
+  class_name?: string;
+  streak_days: number;
+  total_xp: number;
+  overall_mastery: number;
+}
+
+// ── Student Dashboard ─────────────────────────────────────────────────────────
+
+export interface WeakTopicItem {
+  topic_id: number;
+  topic_name: string;
+  subject_name: string;
+  mastery_score: number;
+  current_level: string;
+}
+
+export interface RecentActivityItem {
+  id: number;
+  activity_type: string;
+  title: string;
+  description: string;
+  timestamp: string;
+  xp_earned: number;
+}
+
+export interface ContinueLearningItem {
+  topic_id: number;
+  topic_name: string;
+  subject_name: string;
+  progress_percentage: number;
+  next_action: string;
+}
+
+export interface StudentDashboardData {
+  user_name: string;
+  user_role: string;
+  welcome_message: string;
+  learning_goal?: string;
+  overall_mastery: number;
+  weak_topics: WeakTopicItem[];
+  recent_activity: RecentActivityItem[];
+  continue_learning?: ContinueLearningItem;
+  ask_ai_tutor: {
+    status: string;
+    suggested_prompt: string;
+    recommended_topic: string;
+  };
+  practice_weak_areas: WeakTopicItem[];
+  streak_days: number;
+  total_xp: number;
 }
 
 // ── Subjects & Topics ─────────────────────────────────────────────────────────
@@ -88,7 +173,7 @@ export interface Question {
   topic_id: number;
   question_text: string;
   difficulty: DifficultyLevel;
-  options: Record<string, string>;  // {"A": "...", "B": "..."}
+  options: Record<string, string>;
   is_diagnostic: boolean;
   grade_level?: number;
 }
@@ -122,3 +207,128 @@ export interface DatabaseHealthResponse {
   tables_found: number;
   timestamp: string;
 }
+
+// ── Diagnostic Assessment ──────────────────────────────────────────────────────
+
+export interface QuestionOutForDiagnostic {
+  id: number;
+  question_text: string;
+  options: Record<string, string>;
+  topic_id: number;
+  topic_name: string;
+  difficulty: string;
+}
+
+export interface DiagnosticStartResponse {
+  total_questions: number;
+  subject_name: string;
+  topics_covered: string[];
+  questions: QuestionOutForDiagnostic[];
+}
+
+export interface TopicPerformance {
+  topic_id: number;
+  topic_name: string;
+  score_percentage: number;
+  correct_count: number;
+  total_questions: number;
+  is_weak: boolean;
+}
+
+export interface QuestionReviewItem {
+  question_id: number;
+  question_text: string;
+  topic_name: string;
+  chosen_answer: string;
+  correct_answer: string;
+  is_correct: boolean;
+  explanation: string;
+}
+
+export interface DiagnosticResultResponse {
+  diagnostic_id: number;
+  overall_score_percentage: number;
+  total_questions: number;
+  correct_count: number;
+  baseline_level: string;
+  topic_performances: TopicPerformance[];
+  weak_topics: string[];
+  strong_topics: string[];
+  xp_earned: number;
+  question_reviews: QuestionReviewItem[];
+}
+
+// ── AI Tutor (RAG) ────────────────────────────────────────────────────────────
+
+export interface SourceCitation {
+  title: string;
+  source_url?: string;
+  chunk_text: string;
+  relevance_score: number;
+}
+
+export interface TutorChatRequest {
+  message: string;
+  topic_name?: string;
+  session_id?: number;
+  modifier?: "simpler" | "deeper" | "example" | "practice";
+}
+
+export interface TutorChatResponse {
+  session_id: number;
+  message_id: number;
+  explanation: string;
+  step_by_step: string[];
+  example: string;
+  follow_up: string[];
+  sources: SourceCitation[];
+}
+
+// ── Adaptive Practice Engine ──────────────────────────────────────────────────
+
+export interface PracticeQuestionOut {
+  question_id: number;
+  question_text: string;
+  options: Record<string, string>;
+  topic_id: number;
+  topic_name: string;
+  difficulty: string;
+}
+
+export interface PracticeGenerateResponse {
+  session_topic_name: string;
+  initial_difficulty: string;
+  questions: PracticeQuestionOut[];
+}
+
+export interface PracticeSubmitRequest {
+  question_id: number;
+  chosen_answer: string;
+  time_taken_secs?: number;
+  current_streak?: number;
+  consecutive_wrongs?: number;
+}
+
+export interface PracticeSubmitResponse {
+  is_correct: boolean;
+  correct_answer: string;
+  explanation: string;
+  next_difficulty: string;
+  mastery_score: number;
+  mastery_level: string;
+  xp_earned: number;
+  requires_remediation: boolean;
+  remediation_concept?: string;
+}
+
+export interface RecommendedPracticeItem {
+  topic_id: number;
+  topic_name: string;
+  subject_name: string;
+  mastery_score: number;
+  current_level: string;
+  reason: string;
+}
+
+
+

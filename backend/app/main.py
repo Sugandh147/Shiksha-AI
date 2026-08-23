@@ -19,13 +19,8 @@ from sqlalchemy.exc import SQLAlchemyError
 import logging
 
 from app.config import settings
-from app.routers import health
+from app.routers import health, auth, student, teacher, diagnostic, tutor, practice
 
-# ── Logging setup ─────────────────────────────────────────────────────────────
-logging.basicConfig(
-    level=logging.DEBUG if settings.debug else logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-)
 logger = logging.getLogger(__name__)
 
 
@@ -105,13 +100,14 @@ async def generic_exception_handler(request: Request, exc: Exception):
 
 # ── API Routers ────────────────────────────────────────────────────────────────
 # All routes live under /api/v1 for versioning.
-app.include_router(health.router, prefix="/api/v1")
-
-# Phase 2 routers will be registered here:
-# app.include_router(auth.router,     prefix="/api/v1")
-# app.include_router(student.router,  prefix="/api/v1")
-# app.include_router(tutor.router,    prefix="/api/v1")
-# app.include_router(practice.router, prefix="/api/v1")
+app.include_router(health.router,           prefix="/api/v1")
+app.include_router(auth.router,             prefix="/api/v1")
+app.include_router(student.router,          prefix="/api/v1")
+app.include_router(student.students_router, prefix="/api/v1")
+app.include_router(teacher.router,          prefix="/api/v1")
+app.include_router(diagnostic.router,       prefix="/api/v1")
+app.include_router(tutor.router,            prefix="/api/v1")
+app.include_router(practice.router,         prefix="/api/v1")
 
 
 # ── Root endpoint ─────────────────────────────────────────────────────────────

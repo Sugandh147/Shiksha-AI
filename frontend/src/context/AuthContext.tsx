@@ -7,7 +7,7 @@
  *
  * Any component in the app can call useAuth() to:
  *   • Read the current user (user, token, isAuthenticated)
- *   • Call login() / logout() / register()
+ *   • Call login() / logout() / register() / refreshUser()
  *
  * State is persisted in localStorage so users stay logged in on refresh.
  */
@@ -19,23 +19,20 @@ import api from "@/lib/api";
 // ── Context type ───────────────────────────────────────────────────────────────
 
 interface AuthContextType extends AuthState {
-  login: (credentials: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
+  login: (credentials: LoginRequest) => Promise<User>;
+  register: (data: RegisterRequest) => Promise<User>;
   logout: () => void;
+  refreshUser: () => Promise<User | null>;
 }
 
-// ── Create context (undefined forces consumers to use the provider) ────────────
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// ── Provider component ────────────────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
     user: null,
     token: null,
     isAuthenticated: false,
-    isLoading: true, // true on mount — loading from localStorage
+    isLoading: true,
   });
 
   // Load auth state from localStorage on app start
@@ -64,6 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: true,
       isLoading: false,
     });
+    return response.user;
   }, []);
 
   const register = useCallback(async (data: RegisterRequest) => {
@@ -76,6 +74,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: true,
       isLoading: false,
     });
+    return response.user;
+  }, []);
+
+  const refreshUser = useCallback(async () => {
+    try {
+      const user = await api.get<User>("/auth/me");
+      localStorage.setItem("shikshaai_user", JSON.stringify(user));
+      setState((s) => ({ ...s, user }));
+      return user;
+    } catch {
+      return null;
+    }
   }, []);
 
   const logout = useCallback(() => {
@@ -85,13 +95,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...state, login, register, logout }}>
+    <AuthContext.Provider value={{ ...state, login, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
 }
-
-// ── Hook for consuming auth context ───────────────────────────────────────────
 
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);

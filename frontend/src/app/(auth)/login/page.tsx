@@ -27,12 +27,11 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      await login(formData);
-      // Redirect based on role — AuthContext stores user.role
-      const userStr = localStorage.getItem("shikshaai_user");
-      const user = userStr ? JSON.parse(userStr) : null;
-      if (user?.role === "teacher") {
+      const loggedUser = await login(formData);
+      if (loggedUser.role === "teacher") {
         router.push("/teacher");
+      } else if (!loggedUser.onboarding_completed) {
+        router.push("/onboarding");
       } else {
         router.push("/dashboard");
       }
