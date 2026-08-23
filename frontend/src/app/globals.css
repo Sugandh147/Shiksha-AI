@@ -1,56 +1,56 @@
+/* ── Google Fonts ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
 @import "tailwindcss";
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   ShikshaAI Design System — Light Premium Theme
-   Reference: White/Grey background, Indigo/Purple accents, clean SaaS layout
+   ShikshaAI Design System — Complete CSS
+   Landing: Light premium SaaS theme
+   App pages (auth, dashboard, tutor, etc.): Dark premium theme
    ══════════════════════════════════════════════════════════════════════════════ */
 
+/* ── CSS Custom Properties ────────────────────────────────────────────────── */
 :root {
-  /* Background & Surface */
-  --bg: #ffffff;
-  --bg-subtle: #f8f9fc;
-  --bg-muted: #f1f4f9;
-  --surface: #ffffff;
-  --surface-elevated: #f8faff;
+  /* ── Dark App Theme (auth, dashboard, tutor, teacher pages) ────────────── */
+  --color-bg:           #020617;
+  --color-bg-2:         #050d25;
+  --color-surface:      rgba(11, 19, 41, 0.80);
+  --color-surface-2:    rgba(15, 25, 55, 0.70);
+  --color-border:       rgba(255, 255, 255, 0.08);
+  --color-border-strong:rgba(255, 255, 255, 0.15);
+  --color-text:         #f8fafc;
+  --color-text-muted:   #94a3b8;
+  --color-text-subtle:  #64748b;
 
-  /* Brand Colors */
-  --primary: #5b4cf5;
-  --primary-dark: #4338ca;
-  --primary-light: #7c6ff9;
-  --primary-bg: #ede9fe;
-  --secondary: #6366f1;
+  /* ── Brand / Accent ────────────────────────────────────────────────────── */
+  --color-primary:      #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-emerald:      #10b981;
+  --color-cyan:         #06b6d4;
+  --color-amber:        #f59e0b;
 
-  /* Accent */
-  --accent-cyan: #06b6d4;
-  --accent-teal: #0d9488;
-  --accent-green: #10b981;
-  --accent-amber: #f59e0b;
+  /* ── Light Landing Theme (used on landing page sections) ──────────────── */
+  --light-bg:           #ffffff;
+  --light-surface:      #f8f9fc;
+  --light-border:       #e2e8f0;
+  --light-text:         #0f172a;
+  --light-muted:        #64748b;
 
-  /* Text */
-  --text: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-  --text-subtle: #94a3b8;
+  /* ── Shadows ───────────────────────────────────────────────────────────── */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.2);
+  --shadow-xl:  0 20px 60px rgba(99,102,241,0.2), 0 8px 16px rgba(0,0,0,0.3);
 
-  /* Borders */
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.04);
-  --shadow-xl: 0 20px 60px rgba(91,76,245,0.12), 0 8px 16px rgba(0,0,0,0.06);
-
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  /* ── Radii ─────────────────────────────────────────────────────────────── */
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
   --radius-2xl: 24px;
 }
 
-/* ── Reset ───────────────────────────────────────────────────────────────────── */
+/* ── Reset ───────────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -60,13 +60,12 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
-  background: var(--bg);
 }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', var(--font-inter), system-ui, -apple-system, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -75,7 +74,11 @@ body {
   width: 100%;
 }
 
-/* ── Container ───────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════════════════
+   LANDING PAGE — Light SaaS Theme Utilities
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Container */
 .container-page {
   width: 100%;
   max-width: 1280px;
@@ -85,30 +88,21 @@ body {
   padding-right: 24px;
 }
 @media (max-width: 640px) {
-  .container-page {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
+  .container-page { padding-left: 16px; padding-right: 16px; }
 }
 
-/* ── Typography ──────────────────────────────────────────────────────────────── */
-.heading-hero {
-  font-size: clamp(2.125rem, 4.5vw, 3.5rem);
-  line-height: 1.08;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--text);
+/* Navbar — light */
+.navbar {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.heading-section {
-  font-size: clamp(1.625rem, 3vw, 2.25rem);
-  line-height: 1.2;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--text);
-}
-
-/* ── Gradient Accent Text ────────────────────────────────────────────────────── */
+/* Gradient text — light landing */
 .text-gradient {
   background: linear-gradient(135deg, #5b4cf5 0%, #7c3aed 50%, #06b6d4 100%);
   -webkit-background-clip: text;
@@ -116,171 +110,118 @@ body {
   background-clip: text;
 }
 
-/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+/* Light primary button */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 12px 24px;
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   font-weight: 700;
   font-size: 0.9375rem;
-  background: var(--primary);
+  background: #5b4cf5;
   color: #ffffff;
   border: none;
   cursor: pointer;
   text-decoration: none;
   box-shadow: 0 4px 14px rgba(91,76,245,0.35);
-  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
   white-space: nowrap;
 }
 .btn-primary:hover {
-  background: var(--primary-dark);
+  background: #4338ca;
   box-shadow: 0 6px 20px rgba(91,76,245,0.45);
   transform: translateY(-1px);
 }
 
+/* Light secondary button */
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 12px 24px;
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   font-weight: 700;
   font-size: 0.9375rem;
   background: transparent;
-  color: var(--text-secondary);
-  border: 1.5px solid var(--border-strong);
+  color: #475569;
+  border: 1.5px solid #cbd5e1;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
   white-space: nowrap;
 }
 .btn-secondary:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: var(--primary-bg);
+  border-color: #5b4cf5;
+  color: #5b4cf5;
+  background: #f5f3ff;
   transform: translateY(-1px);
 }
 
-/* ── Card ────────────────────────────────────────────────────────────────────── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
-}
-
+/* Landing card */
 .card-feature {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
   padding: 28px;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
 }
 .card-feature:hover {
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
   border-color: rgba(91,76,245,0.2);
   transform: translateY(-2px);
 }
 
-/* ── Pill / Badge ────────────────────────────────────────────────────────────── */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 99px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-.pill-brand {
-  background: #ede9fe;
-  color: #5b21b6;
-  border: 1px solid #ddd6fe;
-}
-.pill-green {
-  background: #d1fae5;
-  color: #065f46;
-}
-.pill-blue {
-  background: #dbeafe;
-  color: #1e40af;
+/* Progress bars — landing */
+.progress-track { height: 6px; border-radius: 99px; background: #e2e8f0; overflow: hidden; }
+.progress-fill-bar { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #5b4cf5, #7c6ff9); }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   INNER APP PAGES — Dark Premium Theme Utilities
+   (Auth, Dashboard, Teacher, Tutor, Practice, Onboarding, Opportunities)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Glass card — used by auth, onboarding, tutor */
+.glass-card {
+  background: rgba(11, 19, 41, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
-/* ── Navbar ──────────────────────────────────────────────────────────────────── */
-.navbar {
-  background: rgba(255,255,255,0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+/* Glass — used by onboarding */
+.glass {
+  background: rgba(11, 19, 41, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
-/* ── Progress Bar ────────────────────────────────────────────────────────────── */
-.progress-track {
-  height: 6px;
-  border-radius: 99px;
-  background: #e2e8f0;
-  overflow: hidden;
-}
-.progress-fill-bar {
-  height: 100%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, #5b4cf5, #7c6ff9);
-}
-.progress-fill-red {
-  background: linear-gradient(90deg, #ef4444, #f97316);
-}
-.progress-fill-amber {
-  background: linear-gradient(90deg, #f59e0b, #fbbf24);
-}
-
-/* ── Dashboard Scrollbar ─────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-/* ── Dashboard Inner Pages (dark) ────────────────────────────────────────────── */
-/* Used for student/teacher dashboards which remain dark premium */
-.dark-page {
-  background: #020617;
-  color: #f8fafc;
-  min-height: 100vh;
-}
-.dark-surface {
-  background: rgba(11,19,41,0.75);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
-}
-.dark-nav {
-  background: rgba(2,6,23,0.85);
+/* Glass nav — used by dashboard, teacher */
+.glass-nav {
+  background: rgba(2, 6, 23, 0.85);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-}
-.dark-text { color: #f8fafc; }
-.dark-muted { color: #94a3b8; }
-
-/* Progress bars for dark dashboard */
-.progress-bar {
-  height: 6px;
-  border-radius: 99px;
-  background: rgba(255,255,255,0.08);
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, #6366f1, #38bdf8);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-/* Gradient text for dark dashboards */
+/* App container — used by auth and inner pages */
+.app-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+@media (max-width: 640px) {
+  .app-container { padding-left: 16px; padding-right: 16px; }
+}
+
+/* Gradient text — dark theme */
 .gradient-text {
   background: linear-gradient(135deg, #818cf8, #38bdf8, #34d399);
   -webkit-background-clip: text;
@@ -288,13 +229,115 @@ body {
   background-clip: text;
 }
 
-/* Button variants for dashboard pages */
-.btn, .btn-ghost, .badge, .badge-easy, .badge-medium, .card-dark, .glass, .glass-card, .glass-nav, .gradient-card, .app-container, .landing-container {
-  /* Legacy aliases — handled by inline styles where needed */
+/* Text utilities */
+.text-muted { color: var(--color-text-muted); }
+.text-subtle { color: var(--color-text-subtle); }
+.bg-surface { background: var(--color-surface); }
+
+/* Input — dark theme (onboarding, auth) */
+.input {
+  width: 100%;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
 }
-.btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-decoration: none; }
-.btn-primary-dark { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; border: none; padding: 8px 16px; }
-.btn-secondary-dark { background: rgba(255,255,255,0.06); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; }
-.badge-easy { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.2); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+.input::placeholder { color: var(--color-text-subtle); }
+
+/* Select — dark theme */
+select.input, select {
+  appearance: none;
+  cursor: pointer;
+}
+
+/* Buttons — dark theme (used by dashboard, onboarding) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  border: none;
+  padding: 10px 20px;
+  font-family: inherit;
+}
+.btn-primary-dark, .btn.btn-primary {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+}
+.btn-primary-dark:hover, .btn.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(99,102,241,0.5);
+  transform: translateY(-1px);
+}
+.btn-secondary-dark, .btn.btn-secondary {
+  background: rgba(255,255,255,0.06);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+.btn-secondary-dark:hover, .btn.btn-secondary:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+/* Glow helpers */
+.glow-indigo { box-shadow: 0 0 20px rgba(99,102,241,0.35); }
+.glow-emerald { box-shadow: 0 0 20px rgba(16,185,129,0.35); }
+
+/* Progress bar — dark theme */
+.progress-bar { height: 6px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #6366f1, #38bdf8); }
+
+/* Badge variants */
+.badge-easy   { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.2); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
 .badge-medium { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
-.card-dark { background: rgba(11,19,41,0.75); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; }
+.badge-hard   { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.2);  padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+
+/* Card — dark */
+.card-dark {
+  background: rgba(11,19,41,0.75);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+/* Pill badge */
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.01em;
+}
+.pill-brand { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+.pill-green { background: #d1fae5; color: #065f46; }
+.pill-blue  { background: #dbeafe; color: #1e40af; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+/* Animate-in utility (used by auth error alerts) */
+.animate-in { animation: fadeIn 0.2s ease; }
+.fade-in { animation-name: fadeIn; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Responsive helpers ───────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .hide-sm { display: none !important; }
+}
