@@ -11,6 +11,7 @@ from typing import List, Dict
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.constants import WEAK_TOPIC_THRESHOLD_PCT, DIAGNOSTIC_XP_REWARD
 from app.db.database import get_db
 from app.db.models import (
     User, Question, DiagnosticAttempt, SkillMastery, Topic, Subject,
@@ -168,7 +169,7 @@ def submit_diagnostic_quiz(
 
     for t_id, stats in topic_stats.items():
         t_score = round((stats["correct"] / stats["total"]) * 100.0, 1)
-        is_weak = (t_score < 70.0)
+        is_weak = (t_score < WEAK_TOPIC_THRESHOLD_PCT)
 
         if is_weak:
             weak_topics.append(stats["topic_name"])

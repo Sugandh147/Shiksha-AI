@@ -160,7 +160,7 @@ function StudentDetailContent() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {insights.weak_topics.map((wt: any) => (
+              {insights.weak_topics.map((wt) => (
                 <div key={wt.topic_id} className="card border-amber-500/30 bg-amber-500/5 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-amber-400">{wt.subject_name}</span>
@@ -203,7 +203,7 @@ function StudentDetailContent() {
                   </tr>
                 </thead>
                 <tbody className="divide-y" style={{ borderColor: "var(--color-border)" }}>
-                  {insights.quiz_history.map((qh: any, idx: number) => (
+                  {insights.quiz_history.map((qh, idx: number) => (
                     <tr key={idx} className="hover:bg-surface/50 transition-colors text-xs">
                       <td className="py-3 px-4 font-bold text-indigo-300">{qh.topic_name}</td>
                       <td className="py-3 px-4 max-w-sm truncate">{qh.question_text}</td>

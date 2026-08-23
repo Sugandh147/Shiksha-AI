@@ -378,6 +378,29 @@ export interface ClassAnalyticsOut {
   most_improved_students: ImprovedStudentItem[];
 }
 
+export interface WeakTopicDetail {
+  topic_id: number;
+  subject_name: string;
+  topic_name: string;
+  mastery_score: number;
+  current_level: string;
+}
+
+export interface QuizHistoryItem {
+  topic_name: string;
+  question_text: string;
+  chosen_answer: string;
+  correct_answer: string;
+  is_correct: boolean;
+  timestamp?: string;
+}
+
+export interface FrequentMistakeItem {
+  topic_name: string;
+  mistake_count: number;
+  sample_mistake: string;
+}
+
 export interface StudentDetailInsightsOut {
   student_id: number;
   full_name: string;
@@ -387,11 +410,11 @@ export interface StudentDetailInsightsOut {
   overall_mastery: number;
   attention_level: string;
   flagged_reasons: string[];
-  weak_topics: Record<string, any>[];
-  recent_performance: Record<string, any>[];
-  quiz_history: Record<string, any>[];
-  practice_history: Record<string, any>[];
-  frequent_mistakes: Record<string, any>[];
+  weak_topics: WeakTopicDetail[];
+  recent_performance: QuizHistoryItem[];
+  quiz_history: QuizHistoryItem[];
+  practice_history: QuizHistoryItem[];
+  frequent_mistakes: FrequentMistakeItem[];
   recommended_intervention: string;
 }
 

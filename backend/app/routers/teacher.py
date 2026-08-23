@@ -17,6 +17,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from app.config import settings
+from app.core.constants import (
+    WEAK_TOPIC_THRESHOLD_PCT, HIGH_RISK_THRESHOLD_PCT, MEDIUM_RISK_THRESHOLD_PCT
+)
 from app.db.database import get_db
 from app.db.models import (
     User, TeacherProfile, Class, ClassMember, StudentProfile, SkillMastery,
