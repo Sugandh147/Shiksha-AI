@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: shikshaai_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-shikshaai}
+      POSTGRES_USER: ${POSTGRES_USER:-shiksha_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shiksha_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shiksha_user} -d ${POSTGRES_DB:-shikshaai}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  postgres_data:
+    driver: local
