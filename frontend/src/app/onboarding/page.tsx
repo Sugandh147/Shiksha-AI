@@ -130,11 +130,11 @@ export default function OnboardingPage() {
   if (isLoading || !user) return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative" style={{ background: "var(--color-bg)" }}>
-      {/* Dynamic background lighting */}
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative" style={{ background: "#f8f9fc" }}>
+      {/* Background Glows */}
       <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-15 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #6366f1, #10b981, transparent)" }}
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(91,76,245,0.06), rgba(16,185,129,0.06), transparent 70%)" }}
       />
 
       <div className="w-full max-w-2xl relative z-10">
@@ -143,16 +143,16 @@ export default function OnboardingPage() {
           <div className="inline-flex items-center gap-2 mb-4">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
-              style={{ background: "linear-gradient(135deg, #6366f1, #10b981)" }}
+              style={{ background: "linear-gradient(135deg, #5b4cf5, #10b981)" }}
             >
               <BookOpen className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-bold">
-              Shiksha<span className="gradient-text">AI</span> Setup
+            <span className="text-2xl font-extrabold text-slate-900">
+              Shiksha<span className="text-gradient">AI</span> Setup
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Build Your Learning Profile</h1>
-          <p style={{ color: "var(--color-text-muted)" }}>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Build Your Learning Profile</h1>
+          <p className="text-slate-600">
             Step {step} of 4 — Tell us about yourself so we can personalize your AI tutor.
           </p>
 
@@ -163,7 +163,7 @@ export default function OnboardingPage() {
                 key={s}
                 className="flex-1 h-2 rounded-full transition-all duration-300"
                 style={{
-                  background: s <= step ? "linear-gradient(90deg, #6366f1, #10b981)" : "var(--color-surface-2)",
+                  background: s <= step ? "linear-gradient(90deg, #5b4cf5, #10b981)" : "#e2e8f0",
                 }}
               />
             ))}
@@ -171,7 +171,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Card Content */}
-        <div className="glass rounded-3xl p-6 md:p-8 shadow-2xl border" style={{ borderColor: "var(--color-border)" }}>
+        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-200">
           {error && (
             <div
               className="flex items-center gap-2 p-4 rounded-2xl mb-6 text-sm"

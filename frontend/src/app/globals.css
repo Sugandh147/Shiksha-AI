@@ -4,43 +4,37 @@
 @import "tailwindcss";
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   ShikshaAI Design System — Complete CSS
-   Landing: Light premium SaaS theme
-   App pages (auth, dashboard, tutor, etc.): Dark premium theme
+   ShikshaAI Design System — Light SaaS Theme (Entire Application)
+   Background: #f8f9fc / #ffffff
+   Cards: Elevated #ffffff with #e2e8f0 borders
+   Text: Slate dark #0f172a / Muted #64748b
+   Accents: Indigo #5b4cf5 / Emerald #10b981 / Cyan #06b6d4
    ══════════════════════════════════════════════════════════════════════════════ */
 
-/* ── CSS Custom Properties ────────────────────────────────────────────────── */
 :root {
-  /* ── Dark App Theme (auth, dashboard, tutor, teacher pages) ────────────── */
-  --color-bg:           #020617;
-  --color-bg-2:         #050d25;
-  --color-surface:      rgba(11, 19, 41, 0.80);
-  --color-surface-2:    rgba(15, 25, 55, 0.70);
-  --color-border:       rgba(255, 255, 255, 0.08);
-  --color-border-strong:rgba(255, 255, 255, 0.15);
-  --color-text:         #f8fafc;
-  --color-text-muted:   #94a3b8;
-  --color-text-subtle:  #64748b;
+  /* ── Light Theme Tokens ────────────────────────────────────────────────── */
+  --color-bg:           #f8f9fc;
+  --color-bg-2:         #ffffff;
+  --color-surface:      #ffffff;
+  --color-surface-2:    #f1f5f9;
+  --color-border:       #e2e8f0;
+  --color-border-strong:#cbd5e1;
+  --color-text:         #0f172a;
+  --color-text-muted:   #64748b;
+  --color-text-subtle:  #94a3b8;
 
   /* ── Brand / Accent ────────────────────────────────────────────────────── */
-  --color-primary:      #6366f1;
-  --color-primary-dark: #4f46e5;
+  --color-primary:      #5b4cf5;
+  --color-primary-dark: #4338ca;
   --color-emerald:      #10b981;
   --color-cyan:         #06b6d4;
   --color-amber:        #f59e0b;
 
-  /* ── Light Landing Theme (used on landing page sections) ──────────────── */
-  --light-bg:           #ffffff;
-  --light-surface:      #f8f9fc;
-  --light-border:       #e2e8f0;
-  --light-text:         #0f172a;
-  --light-muted:        #64748b;
-
   /* ── Shadows ───────────────────────────────────────────────────────────── */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-  --shadow-md:  0 4px 16px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
-  --shadow-lg:  0 8px 32px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.2);
-  --shadow-xl:  0 20px 60px rgba(99,102,241,0.2), 0 8px 16px rgba(0,0,0,0.3);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.03);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-xl:  0 20px 60px rgba(91,76,245,0.12), 0 8px 24px rgba(0,0,0,0.06);
 
   /* ── Radii ─────────────────────────────────────────────────────────────── */
   --radius-sm:  8px;
@@ -60,6 +54,7 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  background: var(--color-bg);
 }
 
 body {
@@ -74,12 +69,8 @@ body {
   width: 100%;
 }
 
-/* ════════════════════════════════════════════════════════════════════════════
-   LANDING PAGE — Light SaaS Theme Utilities
-   ════════════════════════════════════════════════════════════════════════════ */
-
-/* Container */
-.container-page {
+/* ── Containers ───────────────────────────────────────────────────────────── */
+.container-page, .app-container {
   width: 100%;
   max-width: 1280px;
   margin-left: auto;
@@ -88,256 +79,206 @@ body {
   padding-right: 24px;
 }
 @media (max-width: 640px) {
-  .container-page { padding-left: 16px; padding-right: 16px; }
+  .container-page, .app-container { padding-left: 16px; padding-right: 16px; }
 }
 
-/* Navbar — light */
-.navbar {
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid #e2e8f0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+/* ── Typography & Gradients ───────────────────────────────────────────────── */
+.heading-hero {
+  font-size: clamp(2.125rem, 4.5vw, 3.5rem);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
 }
 
-/* Gradient text — light landing */
-.text-gradient {
+.heading-section {
+  font-size: clamp(1.625rem, 3vw, 2.25rem);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.text-gradient, .gradient-text {
   background: linear-gradient(135deg, #5b4cf5 0%, #7c3aed 50%, #06b6d4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Light primary button */
-.btn-primary {
+.text-muted { color: var(--color-text-muted); }
+.text-subtle { color: var(--color-text-subtle); }
+.bg-surface { background: var(--color-surface); }
+
+/* ── Navigation ──────────────────────────────────────────────────────────── */
+.navbar, .glass-nav {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* ── Cards & Surfaces ────────────────────────────────────────────────────── */
+.card, .card-dark, .card-feature, .glass-card, .glass {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.card-feature {
+  padding: 28px;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+}
+.card-feature:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(91,76,245,0.2);
+  transform: translateY(-2px);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn-primary, .btn-primary-dark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: 11px 22px;
+  border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 0.9375rem;
-  background: #5b4cf5;
-  color: #ffffff;
+  background: var(--color-primary);
+  color: #ffffff !important;
   border: none;
   cursor: pointer;
   text-decoration: none;
   box-shadow: 0 4px 14px rgba(91,76,245,0.35);
   transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
   white-space: nowrap;
+  font-family: inherit;
 }
-.btn-primary:hover {
-  background: #4338ca;
+.btn-primary:hover, .btn-primary-dark:hover {
+  background: var(--color-primary-dark);
   box-shadow: 0 6px 20px rgba(91,76,245,0.45);
   transform: translateY(-1px);
 }
 
-/* Light secondary button */
-.btn-secondary {
+.btn-secondary, .btn-secondary-dark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: 11px 22px;
+  border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 0.9375rem;
-  background: transparent;
+  background: #ffffff;
   color: #475569;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--color-border-strong);
   cursor: pointer;
   text-decoration: none;
   transition: border-color 0.2s, background 0.2s, transform 0.15s;
   white-space: nowrap;
+  font-family: inherit;
 }
-.btn-secondary:hover {
-  border-color: #5b4cf5;
-  color: #5b4cf5;
+.btn-secondary:hover, .btn-secondary-dark:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   background: #f5f3ff;
   transform: translateY(-1px);
 }
 
-/* Landing card */
-.card-feature {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 28px;
-  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
-}
-.card-feature:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-  border-color: rgba(91,76,245,0.2);
-  transform: translateY(-2px);
-}
-
-/* Progress bars — landing */
-.progress-track { height: 6px; border-radius: 99px; background: #e2e8f0; overflow: hidden; }
-.progress-fill-bar { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #5b4cf5, #7c6ff9); }
-
-/* ════════════════════════════════════════════════════════════════════════════
-   INNER APP PAGES — Dark Premium Theme Utilities
-   (Auth, Dashboard, Teacher, Tutor, Practice, Onboarding, Opportunities)
-   ════════════════════════════════════════════════════════════════════════════ */
-
-/* Glass card — used by auth, onboarding, tutor */
-.glass-card {
-  background: rgba(11, 19, 41, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Glass — used by onboarding */
-.glass {
-  background: rgba(11, 19, 41, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Glass nav — used by dashboard, teacher */
-.glass-nav {
-  background: rgba(2, 6, 23, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-/* App container — used by auth and inner pages */
-.app-container {
-  width: 100%;
-  max-width: 1280px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-@media (max-width: 640px) {
-  .app-container { padding-left: 16px; padding-right: 16px; }
-}
-
-/* Gradient text — dark theme */
-.gradient-text {
-  background: linear-gradient(135deg, #818cf8, #38bdf8, #34d399);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Text utilities */
-.text-muted { color: var(--color-text-muted); }
-.text-subtle { color: var(--color-text-subtle); }
-.bg-surface { background: var(--color-surface); }
-
-/* Input — dark theme (onboarding, auth) */
-.input {
-  width: 100%;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 10px 16px;
-  font-size: 14px;
-  color: var(--color-text);
-  outline: none;
-  transition: border-color 0.2s;
-  font-family: inherit;
-}
-.input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
-}
-.input::placeholder { color: var(--color-text-subtle); }
-
-/* Select — dark theme */
-select.input, select {
-  appearance: none;
-  cursor: pointer;
-}
-
-/* Buttons — dark theme (used by dashboard, onboarding) */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
-  border: none;
   padding: 10px 20px;
   font-family: inherit;
 }
-.btn-primary-dark, .btn.btn-primary {
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(99,102,241,0.35);
-}
-.btn-primary-dark:hover, .btn.btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(99,102,241,0.5);
-  transform: translateY(-1px);
-}
-.btn-secondary-dark, .btn.btn-secondary {
-  background: rgba(255,255,255,0.06);
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-}
-.btn-secondary-dark:hover, .btn.btn-secondary:hover {
-  background: rgba(255,255,255,0.1);
-  border-color: var(--color-border-strong);
+
+/* ── Form Inputs ─────────────────────────────────────────────────────────── */
+.input, input[type="text"], input[type="email"], input[type="password"], select, textarea {
+  width: 100%;
+  background: #f8f9fc;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
   color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+.input:focus, input:focus, select:focus, textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(91,76,245,0.12);
+  background: #ffffff;
+}
+.input::placeholder, input::placeholder, textarea::placeholder {
+  color: var(--color-text-subtle);
 }
 
-/* Glow helpers */
-.glow-indigo { box-shadow: 0 0 20px rgba(99,102,241,0.35); }
-.glow-emerald { box-shadow: 0 0 20px rgba(16,185,129,0.35); }
-
-/* Progress bar — dark theme */
-.progress-bar { height: 6px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #6366f1, #38bdf8); }
-
-/* Badge variants */
-.badge-easy   { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.2); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
-.badge-medium { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
-.badge-hard   { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.2);  padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
-
-/* Card — dark */
-.card-dark {
-  background: rgba(11,19,41,0.75);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
-  padding: 24px;
+select {
+  appearance: none;
+  cursor: pointer;
 }
 
-/* Pill badge */
+/* ── Glow Effects ────────────────────────────────────────────────────────── */
+.glow-indigo { box-shadow: 0 0 20px rgba(91,76,245,0.25); }
+.glow-emerald { box-shadow: 0 0 20px rgba(16,185,129,0.25); }
+
+/* ── Progress & Badges ───────────────────────────────────────────────────── */
+.progress-track, .progress-bar {
+  height: 6px;
+  border-radius: 99px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+.progress-fill-bar, .progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #5b4cf5, #7c6ff9);
+}
+
+.badge-easy   { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+.badge-medium { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+.badge-hard   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+
 .pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 12px; border-radius: 99px;
-  font-size: 12px; font-weight: 700; letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 .pill-brand { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
-.pill-green { background: #d1fae5; color: #065f46; }
-.pill-blue  { background: #dbeafe; color: #1e40af; }
+.pill-green { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.pill-blue  { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+/* ── Scrollbars ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-/* Animate-in utility (used by auth error alerts) */
+/* ── Animations ──────────────────────────────────────────────────────────── */
 .animate-in { animation: fadeIn 0.2s ease; }
 .fade-in { animation-name: fadeIn; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ── Responsive helpers ───────────────────────────────────────────────────── */
+/* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .hide-sm { display: none !important; }
 }

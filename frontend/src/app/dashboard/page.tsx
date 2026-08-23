@@ -145,16 +145,15 @@ function StudentDashboardContent() {
 
             <Link
               href="/profile"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-white/5 transition-colors border"
-              style={{ borderColor: "var(--color-border)" }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-slate-100 transition-colors border border-slate-200"
             >
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                style={{ background: "linear-gradient(135deg, #6366f1, #10b981)" }}
+                style={{ background: "linear-gradient(135deg, #5b4cf5, #10b981)" }}
               >
                 {getInitials(user?.full_name || "Student")}
               </div>
-              <span className="text-sm font-medium hidden sm:inline">{user?.full_name?.split(" ")[0]}</span>
+              <span className="text-sm font-semibold text-slate-700 hidden sm:inline">{user?.full_name?.split(" ")[0]}</span>
             </Link>
 
             <button onClick={logout} className="btn btn-secondary py-2 px-3 text-xs flex items-center gap-1.5">
@@ -173,55 +172,55 @@ function StudentDashboardContent() {
             </div>
             <h1 className="text-2xl md:text-3xl font-bold mb-2">{data.welcome_message}</h1>
             {data.learning_goal && (
-              <p className="text-sm flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
-                <Target className="w-4 h-4 text-emerald-400" /> Goal: <span className="font-medium text-white">{data.learning_goal}</span>
+              <p className="text-sm flex items-center gap-2 text-slate-600">
+                <Target className="w-4 h-4 text-emerald-600" /> Goal: <span className="font-semibold text-slate-900">{data.learning_goal}</span>
               </p>
             )}
           </div>
 
           <div className="flex gap-4 self-stretch md:self-auto shrink-0">
-            <div className="glass flex-1 md:flex-initial p-4 rounded-2xl text-center min-w-[100px]">
-              <Flame className="w-6 h-6 mx-auto mb-1 text-amber-400 animate-pulse-slow" />
-              <div className="text-2xl font-bold">{data.streak_days}</div>
-              <div className="text-xs" style={{ color: "var(--color-text-muted)" }}>Day Streak</div>
+            <div className="bg-white border border-slate-200 shadow-sm flex-1 md:flex-initial p-4 rounded-2xl text-center min-w-[100px]">
+              <Flame className="w-6 h-6 mx-auto mb-1 text-amber-500 animate-pulse-slow" />
+              <div className="text-2xl font-extrabold text-slate-900">{data.streak_days}</div>
+              <div className="text-xs text-slate-500 font-medium">Day Streak</div>
             </div>
-            <div className="glass flex-1 md:flex-initial p-4 rounded-2xl text-center min-w-[100px]">
-              <Trophy className="w-6 h-6 mx-auto mb-1 text-indigo-400" />
-              <div className="text-2xl font-bold">{data.total_xp}</div>
-              <div className="text-xs" style={{ color: "var(--color-text-muted)" }}>Total XP</div>
+            <div className="bg-white border border-slate-200 shadow-sm flex-1 md:flex-initial p-4 rounded-2xl text-center min-w-[100px]">
+              <Trophy className="w-6 h-6 mx-auto mb-1 text-indigo-600" />
+              <div className="text-2xl font-extrabold text-slate-900">{data.total_xp}</div>
+              <div className="text-xs text-slate-500 font-medium">Total XP</div>
             </div>
           </div>
         </div>
 
         {/* ── Diagnostic Quiz Prompt Banner ─────────────────────────────── */}
-        <div className="glass rounded-3xl p-6 border flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderColor: "rgba(16, 185, 129, 0.3)", background: "rgba(16, 185, 129, 0.05)" }}>
+        <div className="bg-emerald-50/60 rounded-3xl p-6 border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ background: "rgba(16, 185, 129, 0.2)", color: "#10b981" }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-emerald-100 text-emerald-600">
               <Brain className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-base">Mathematics Diagnostic Assessment</h3>
-              <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+              <h3 className="font-extrabold text-base text-slate-900">Mathematics Diagnostic Assessment</h3>
+              <p className="text-xs text-slate-600">
                 Test your knowledge across Algebra, Quadratic Equations, Trigonometry, Geometry, and Statistics.
               </p>
             </div>
           </div>
-          <Link href="/diagnostic" className="btn btn-primary text-xs py-2.5 px-5 flex items-center gap-2 shrink-0">
+          <Link href="/diagnostic" className="btn-primary text-xs py-2.5 px-5 flex items-center gap-2 shrink-0">
             <Sparkles className="w-4 h-4" /> Start Diagnostic Quiz <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         {/* ── OpportunityMatch Card ─────────────────────────────────────── */}
-        <div className="glass rounded-2xl p-5 border flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ borderColor: "rgba(245, 158, 11, 0.4)", background: "rgba(245, 158, 11, 0.05)" }}>
+        <div className="bg-amber-50/60 rounded-2xl p-5 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
               <Award className="w-6 h-6" />
             </div>
             <div>
-              <div className="font-bold text-sm text-white flex items-center gap-2">
-                OpportunityMatch Engine <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">Matches Available</span>
+              <div className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                OpportunityMatch Engine <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-100 text-amber-800 font-bold border border-amber-300">Matches Available</span>
               </div>
-              <p className="text-xs text-muted">
+              <p className="text-xs text-slate-600">
                 Matched public scholarships & Olympiads based on your grade level and DB performance.
               </p>
             </div>
