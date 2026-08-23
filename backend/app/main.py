@@ -131,6 +131,22 @@ async def startup_event():
     logger.info(f"📚 API Docs: http://localhost:8000/docs")
     logger.info(f"🔧 Debug mode: {settings.debug}")
 
+    # Auto-create tables & auto-seed if database is brand new
+    try:
+        from app.db.database import engine, SessionLocal, Base
+        from app.db.models import Question
+        Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
+        q_count = db.query(Question).count()
+        db.close()
+
+        if q_count == 0:
+            logger.info("🌱 Brand new database detected — auto-seeding Classes 6-12 curriculum...")
+            from reset_and_seed_content import purge_and_seed
+            purge_and_seed()
+    except Exception as err:
+        logger.warning(f"Auto-seed check note: {err}")
+
 
 @app.on_event("shutdown")
 async def shutdown_event():

@@ -29,24 +29,29 @@ router = APIRouter(prefix="/diagnostic", tags=["Diagnostic Assessment"])
 
 @router.post("/start", response_model=DiagnosticStartResponse)
 def start_diagnostic_quiz(
+    grade_level: Optional[int] = None,
+    subject_id: Optional[int] = None,
     current_user: User = Depends(require_student),
     db: Session = Depends(get_db),
 ):
     """
-    Fetch the diagnostic assessment questions for Mathematics.
-    Returns 10-15 MCQ questions without exposing correct answers or explanations.
+    Fetch diagnostic assessment questions customized for the student's Class/Grade and Subject.
     """
-    # 1. Fetch diagnostic questions for Mathematics
-    questions = (
-        db.query(Question)
-        .join(Subject, Question.subject_id == Subject.id)
-        .join(Topic, Question.topic_id == Topic.id)
-        .filter(Question.is_diagnostic == True)
-        .all()
-    )
+    student_grade = grade_level or (current_user.student_profile.grade_level if current_user.student_profile else 8)
+
+    query = db.query(Question).filter(Question.is_diagnostic == True)
+
+    if subject_id:
+        query = query.filter(Question.subject_id == subject_id)
+
+    # 1. Filter by student's grade level
+    questions = query.filter(Question.grade_level == student_grade).all()
 
     if not questions:
         # Fallback to any diagnostic questions
+        questions = query.all()
+
+    if not questions:
         questions = db.query(Question).filter(Question.is_diagnostic == True).all()
 
     if not questions:
@@ -54,6 +59,11 @@ def start_diagnostic_quiz(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No diagnostic questions found in the database.",
         )
+
+    # Get subject name
+    subject_name = "Mathematics"
+    if questions[0].subject:
+        subject_name = questions[0].subject.name
 
     topics_covered = sorted(list(set(q.topic.name for q in questions if q.topic)))
 
@@ -63,7 +73,7 @@ def start_diagnostic_quiz(
             question_text=q.question_text,
             options=q.options or {},
             topic_id=q.topic_id,
-            topic_name=q.topic.name if q.topic else "Mathematics",
+            topic_name=q.topic.name if q.topic else subject_name,
             difficulty=q.difficulty.value if hasattr(q.difficulty, "value") else str(q.difficulty),
         )
         for q in questions
@@ -71,7 +81,7 @@ def start_diagnostic_quiz(
 
     return DiagnosticStartResponse(
         total_questions=len(q_list),
-        subject_name="Mathematics",
+        subject_name=subject_name,
         topics_covered=topics_covered,
         questions=q_list,
     )

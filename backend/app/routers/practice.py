@@ -32,19 +32,20 @@ def generate_practice_set(
     db: Session = Depends(get_db),
 ):
     """
-    Generate an adaptive practice set for a specific topic or automatically select weak areas.
+    Generate an adaptive practice set customized for the student's grade level & selected topic.
     """
+    student_grade = current_user.student_profile.grade_level if current_user.student_profile else 8
     target_topic: Optional[Topic] = None
 
     if payload.topic_id:
         target_topic = db.query(Topic).filter(Topic.id == payload.topic_id).first()
 
     if not target_topic:
-        # Automatically select student's weakest topic (< 70% mastery)
+        # Automatically select student's weakest topic matching grade level
         weakest_mastery = (
             db.query(SkillMastery, Topic)
             .join(Topic, SkillMastery.topic_id == Topic.id)
-            .filter(SkillMastery.student_id == current_user.id)
+            .filter(SkillMastery.student_id == current_user.id, Topic.grade_level == student_grade)
             .order_by(SkillMastery.mastery_score.asc())
             .first()
         )
@@ -52,7 +53,11 @@ def generate_practice_set(
             target_topic = weakest_mastery.Topic
 
     if not target_topic:
-        # Fallback to first available topic in DB
+        # Fallback to first available topic for student's grade
+        target_topic = db.query(Topic).filter(Topic.grade_level == student_grade).first()
+
+    if not target_topic:
+        # Fallback to any topic in DB
         target_topic = db.query(Topic).first()
 
     if not target_topic:
@@ -74,7 +79,7 @@ def generate_practice_set(
     initial_level = mastery.current_level if mastery else DifficultyLevel.medium
     level_str = initial_level.value if hasattr(initial_level, "value") else str(initial_level)
 
-    # Query practice questions for target topic
+    # Query practice questions for target topic & grade
     questions = (
         db.query(Question)
         .filter(Question.topic_id == target_topic.id)
@@ -82,7 +87,10 @@ def generate_practice_set(
     )
 
     if not questions:
-        # Fallback to any questions in DB
+        # Fallback to questions for same grade level
+        questions = db.query(Question).filter(Question.grade_level == student_grade).all()
+
+    if not questions:
         questions = db.query(Question).all()
 
     if not questions:
