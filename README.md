@@ -1,49 +1,128 @@
-# 🎓 ShikshaAI — AI-Powered Equitable K-12 Education Platform
+# ShikshaAI
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-v20.11.0-brightgreen.svg)](https://nodejs.org/)
-[![Python Version](https://img.shields.io/badge/python-v3.11.0-blue.svg)](https://www.python.org/)
-[![FastAPI Version](https://img.shields.io/badge/FastAPI-v0.110.0-009688.svg)](https://fastapi.tiangolo.com/)
-[![Next.js Version](https://img.shields.io/badge/Next.js-v14.2-black.svg)](https://nextjs.org/)
-[![Database](https://img.shields.io/badge/PostgreSQL-v16_with_pgvector-336791.svg)](https://www.postgresql.org/)
+## AI-Powered Equitable Learning Platform
+
+ShikshaAI is an intelligent, grounded learning platform designed for Indian K-12 education that personalizes learning by combining AI tutoring, Retrieval-Augmented Generation (RAG) textbook explanations, baseline diagnostic assessments, adaptive practice sets, real-time student mastery tracking, multilingual instruction, teacher intelligence dashboards, and AI Teacher Copilot analytics. The application operates using **100% REAL USER ACCOUNTS and REAL LEARNING DATA**, allowing students and teachers to generate authentic database records without hardcoded analytics or fake personas.
 
 ---
 
-## 📖 What it is
-**ShikshaAI** is a grounded, multilingual AI-powered learning environment engineered specifically for Indian K-12 education. It combines **Grounded RAG AI Tutoring** (anchored strictly in official NCERT textbooks) with an **Adaptive Learning Engine** and **ClassPulse Teacher Intelligence** to deliver personalized 1-on-1 tutoring to students while giving teachers real-time diagnostic risk visibility.
+## PROBLEM
+
+Across India's K-12 education system, over 250 million students face severe access and equity challenges. Overcrowded classrooms leave teachers unable to deliver individualized 1-on-1 support, causing students with foundational math and science gaps to fall silently behind. Existing digital tools often rely on static video lectures or generic AI chatbots that hallucinate mathematical formulas, lack curriculum alignment, and provide zero textbook citations or regional language support.
 
 ---
 
-## 🎯 Problem & Solution
+## SOLUTION
 
-### The Problem
-- **Massive Student-Teacher Imbalance**: India has over 250 million K-12 students, leading to overcrowded classrooms where millions struggle silently with foundational math & science concepts.
-- **Flawed Generic AI Chatbots**: Public chatbots like ChatGPT hallucinate math formulas, lack curriculum alignment, and fail to provide textbook citations or local language support.
-- **Teacher Blind Spots**: Teachers lack real-time visibility into micro-concept gaps before semester exams.
+ShikshaAI solves this through a **Closed-Loop Grounded Learning Cycle**:
 
-### The Solution
-- **Closed-Loop Grounded Learning**: Baseline diagnostic quizzes automatically pinpoint weak topics.
-- **NCERT Grounded RAG Tutoring**: AI answers questions step-by-step in English, Hindi, or Hinglish with explicit textbook chapter citations.
-- **Real-Time Mastery Gain**: Adaptive practice sets recalculate mastery scores ($0.75 \cdot Old + 0.25 \cdot Current$) and adjust difficulty in real time.
-- **ClassPulse Teacher Copilot**: Teachers view live class rosters, attention risk flags, and use an AI Copilot to generate evidence-based teaching interventions.
+```
+Assess (Diagnostic Quiz)
+  ↓
+Identify (Weak Topic Analysis)
+  ↓
+Teach (NCERT Grounded RAG AI Tutor)
+  ↓
+Practice (Adaptive Dynamic Difficulty)
+  ↓
+Measure (SkillMastery Weighted Recency Calculation)
+  ↓
+Adapt (Dynamic Question Escalation / Remediation)
+  ↓
+Teacher Intervention (ClassPulse Risk Flags & AI Copilot)
+```
 
 ---
 
-## 🏗️ Technical Architecture
+## KEY FEATURES
+
+- **Real User Registration & Profiles**: Authentic registration for students and teachers with persistent database storage in PostgreSQL/SQLite.
+- **Student Onboarding**: Collects grade level, preferred subjects, target goals, and preferred learning language.
+- **Baseline Diagnostic Assessment**: Automatically evaluates subject readiness and pinpoints exact topic-level weaknesses (<70% mastery threshold).
+- **NCERT Grounded RAG AI Tutor**: Answers student questions step-by-step in English, Hindi, or Hinglish with explicit textbook chapter source citations.
+- **📷 Vision AI Photo Question Solver**: Extracts LaTeX formulas from uploaded question photos using Google Gemini 1.5 Vision and generates step-by-step solutions.
+- **Real-Time Adaptive Practice**: Dynamic practice sets that adjust question difficulty (Easy → Medium → Hard) based on consecutive correct streaks or wrong answers.
+- **SkillMastery Engine**: Recalculates topic mastery after every attempt using a weighted recency formula ($Mastery_{new} = 0.75 \cdot Mastery_{old} + 0.25 \cdot Score_{current}$).
+- **Multilingual Instruction**: Supports English, Devanagari Hindi (`hi`), and Hinglish (`hi-en`) for accessible learning across diverse linguistic backgrounds.
+- **ClassPulse Teacher Dashboard**: Gives teachers real-time visibility into class average mastery, quiz accuracy, and transparent Learning Attention Indicator risk scores.
+- **Class Join System**: Teachers create classes and generate unique 6-character join codes (e.g. `MATH8A`) for student enrollment.
+- **AI Teacher Copilot**: Translates natural language teacher queries into live database metrics and provides evidence-based pedagogical recommendations.
+- **STEM Opportunity Matcher**: Matches qualified students to verified national scholarships (e.g. KVPY, NTSE) based on grade and mastery scores.
+
+---
+
+## HOW IT WORKS
+
+### Student Flow
+1. **Register & Log In**: Student creates a new account and selects preferred language.
+2. **Onboarding**: Selects grade (e.g. Class 8) and learning goals.
+3. **Diagnostic Quiz**: Answers baseline questions; system stores attempts in PostgreSQL and identifies weak topics.
+4. **AI Tutor**: Student asks for concept explanations; RAG engine vector-searches official NCERT textbook chunks and streams grounded answers with citations.
+5. **Adaptive Practice**: Student completes questions; correct answers award XP and escalate difficulty, while wrong answers trigger concept remediation.
+6. **Mastery Update**: SkillMastery and dashboard statistics update dynamically.
+
+### Teacher Flow
+1. **Register & Log In**: Teacher creates account and accesses ClassPulse dashboard.
+2. **Create Class**: Teacher creates a class and receives an invite code.
+3. **Student Join**: Students enter the join code to enroll in the class.
+4. **Analytics & Copilot**: Teacher views live class roster, attention risk indicators, and asks Teacher Copilot for targeted intervention strategies.
+
+---
+
+## AI / RAG ARCHITECTURE
+
+```
+Student Question / Query
+  ↓
+Text Preprocessing & Tokenization
+  ↓
+TF-IDF Term Frequency Cosine Similarity Search
+  ↓
+Top Relevant NCERT Textbook Chunks Retrieved (top_k=3)
+  ↓
+System Prompt Assembly (Curriculum Rules + Source Context + Language Rule)
+  ↓
+Google Gemini 1.5 Flash LLM Processing
+  ↓
+Grounded Response + Verifiable NCERT Source Citations
+```
+
+### Why RAG is Essential
+Public LLMs frequently hallucinate math steps and use non-standard methods. ShikshaAI's RAG architecture forces the LLM to pull facts strictly from official NCERT textbook knowledge bases, eliminating hallucinations and ensuring 100% curriculum alignment.
+
+---
+
+## TECH STACK
+
+| Technology | Purpose |
+| :--- | :--- |
+| **Next.js 14 (App Router)** | High-performance React frontend framework with Turbopack |
+| **TypeScript** | Type-safe development across frontend and backend schemas |
+| **Vanilla CSS & Glassmorphism** | Modern, responsive visual design system |
+| **FastAPI (v0.110.0)** | Asynchronous, high-throughput Python API gateway |
+| **SQLAlchemy ORM** | Relational ORM mapping 17 database tables |
+| **PostgreSQL 16 / SQLite** | Relational database storage with foreign key indexing |
+| **pgvector** | PostgreSQL vector similarity extension |
+| **Google Gemini 1.5 Flash** | Multilingual LLM for grounded tutoring & Teacher Copilot |
+| **Docker Compose** | Reproducible multi-container infrastructure orchestration |
+
+---
+
+## ARCHITECTURE
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                     FRONTEND (Next.js 14 Turbopack)                     │
-│  React 18 • TypeScript • Vanilla CSS Glassmorphism • Axios Client      │
+│                     FRONTEND (Next.js 14 App Router)                    │
+│  React Components • Glassmorphism UI • Axios authenticated requests     │
 └────────────────────────────────────┬────────────────────────────────────┘
-                                     │ HTTP REST Requests (JWT Bearer)
+                                     │ HTTP REST Requests (JWT Bearer Token)
 ┌────────────────────────────────────▼────────────────────────────────────┐
 │                      BACKEND API (FastAPI v0.110)                       │
 │  Routers: Auth • Student • Teacher • Diagnostic • Tutor • Practice      │
 └────────┬───────────────────────────┬───────────────────────────┬────────┘
-         │ SQLAlchemy ORM            │ Vector Retrieval          │ Vision OCR
+         │ SQLAlchemy ORM            │ Vector Search             │ Vision API
 ┌────────▼──────────┐       ┌────────▼──────────┐       ┌────────▼──────────┐
-│ DATABASE STORAGE  │       │ GROUNDED RAG AI   │       │ VISION AI SOLVER  │
+│ DATABASE STORAGE  │       │ GROUNDED RAG AI   │       │ VISION OCR AI     │
 │ PostgreSQL/SQLite │       │ TF-IDF Cosine     │       │ Google Gemini     │
 │ 17 Relational ORM │       │ NCERT Chunks      │       │ 1.5 Flash Vision  │
 └───────────────────┘       └───────────────────┘       └───────────────────┘
@@ -51,165 +130,169 @@
 
 ---
 
-## 💻 Tech Stack & Pinned Versions
+## DATABASE SCHEMA OVERVIEW
 
-- **Frontend**: Next.js `14.2` (Turbopack App Router), React `18`, TypeScript `5`, Lucide Icons, Axios.
-- **Backend**: FastAPI `0.110.0`, Uvicorn `0.28.0`, Pydantic V2 `2.6.4`, Passlib Bcrypt, PyJWT.
-- **Database**: PostgreSQL `16` (with `pgvector`) or SQLite `3` (for local development).
-- **AI & RAG**: Google Gemini 1.5 Flash REST API, TF-IDF Cosine Vector Search Engine.
+The database architecture consists of 17 fully indexed relational ORM tables:
 
----
-
-## 📋 Prerequisites
-
-Before cloning and setting up ShikshaAI, ensure your local machine has the following tools installed:
-
-| Tool | Required Version | Verification Command | Download Link |
-| :--- | :--- | :--- | :--- |
-| **Git** | `v2.30+` | `git --version` | [git-scm.com](https://git-scm.com) |
-| **Node.js** | `v20.11.0` (LTS) | `node -v` | [nodejs.org](https://nodejs.org) |
-| **npm** | `v10.0+` | `npm -v` | Included with Node.js |
-| **Python** | `v3.11.0+` | `python --version` | [python.org](https://www.python.org) |
-| **Docker Desktop** | `v4.20+` | `docker --version` | [docker.com](https://www.docker.com) |
+- `users`: Authentication credentials, roles (`student`/`teacher`), and language preferences.
+- `student_profiles`: Grade level, learning style, total XP, streak days, and onboarding status.
+- `teacher_profiles`: School name, subject specialization, and years of experience.
+- `classes` & `class_members`: Class metadata, teacher ownership, 6-character `invite_code`, and student enrollment links.
+- `subjects` & `topics`: NCERT curriculum taxonomy hierarchy.
+- `questions`: Question bank with difficulty levels, options, explanations, and diagnostic flags.
+- `diagnostic_attempts` & `quiz_attempts`: Attempt logs recording chosen answers, correctness, and response times.
+- `skill_masteries`: Dynamic topic mastery scores, level escalation, and streak counts.
+- `learning_events`: Logged events tracking XP gains and activity history.
+- `chat_sessions` & `chat_messages`: Tutor chat histories.
+- `documents` & `document_chunks`: NCERT textbook knowledge base chunks and metadata for RAG search.
+- `opportunities`: Verified STEM scholarship listings.
 
 ---
 
-## ⚡ Quickstart (One-Command Automated Setup)
+## LOCAL DEVELOPMENT
 
-1. **Clone the Repository**:
+### Prerequisites
+- Node.js `v20.11.0` (LTS)
+- Python `v3.11.0+`
+- Docker Desktop `v4.20+`
+
+### Setup & Run Instructions
+
+1. **Clone Repository**:
    ```bash
    git clone https://github.com/Sugandh147/Shiksha-AI.git
    cd Shiksha-AI
    ```
 
-2. **Run Automated Setup**:
-   - **Windows (PowerShell)**:
-     ```powershell
-     .\scripts\setup.ps1
-     ```
-   - **macOS / Linux (Bash)**:
-     ```bash
-     chmod +x scripts/*.sh
-     ./scripts/setup.sh
-     ```
+2. **Environment File**:
+   ```bash
+   cp .env.example .env
+   ```
 
-3. **Start Development Servers**:
-   - **Windows (PowerShell)**:
-     ```powershell
-     .\scripts\start.ps1
-     ```
-   - **macOS / Linux (Bash)**:
-     ```bash
-     ./scripts/start.sh
-     ```
+3. **Start PostgreSQL Database**:
+   ```bash
+   docker compose up -d db
+   ```
 
-4. **Open Application**:
-   - Frontend UI: `http://localhost:3000`
-   - Backend API Documentation: `http://localhost:8000/docs`
+4. **Install Backend Dependencies**:
+   ```bash
+   cd backend
+   python -m venv venv
+   # Windows: .\venv\Scripts\activate | macOS/Linux: source venv/bin/activate
+   pip install -r requirements.txt
+   cd ..
+   ```
 
----
+5. **Install Frontend Dependencies**:
+   ```bash
+   cd frontend
+   npm install
+   cd ..
+   ```
 
-## 🛠️ Manual Step-by-Step Installation Guide
+6. **Initialize Database & Ingest Knowledge Base**:
+   ```bash
+   python scripts/ingest_knowledge.py
+   ```
 
-If you prefer installing dependencies manually, follow these steps:
+7. **Start Application Servers**:
+   - **Windows (PowerShell)**: `.\scripts\start.ps1`
+   - **macOS / Linux (Bash)**: `./scripts/start.sh`
 
-### Step 1: Environment Variables Setup
-Copy the template environment file to `.env`:
-```bash
-cp .env.example .env
-```
-*(Optional: Open `.env` and add your free `GEMINI_API_KEY` from [Google AI Studio](https://aistudio.google.com)).*
-
-### Step 2: Infrastructure Database (PostgreSQL)
-Start PostgreSQL container using Docker Compose:
-```bash
-docker compose up -d db
-```
-*Verify DB container health:*
-```bash
-docker compose ps
-```
-
-### Step 3: Backend Setup (Python Virtualenv)
-```bash
-cd backend
-python -m venv venv
-
-# On Windows:
-.\venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-### Step 4: Run Database Migrations & Knowledge Ingestion
-From the project root:
-```bash
-# Ingest NCERT knowledge base RAG chunks & educational question bank:
-python scripts/ingest_knowledge.py
-```
-*(This sets up a clean database with **0 Users, 0 Classes, 0 Attempts**, ready for live registration).*
-
-### Step 5: Frontend Setup (Next.js)
-```bash
-cd frontend
-npm install
-```
-
-### Step 6: Start Applications
-- **Backend**: `uvicorn app.main:app --reload --host 127.0.0.1 --port 8000` (from `backend/`)
-- **Frontend**: `npm run dev` (from `frontend/`)
+8. **Open Application**:
+   Navigate to `http://localhost:3000` and register your account.
 
 ---
 
-## 📚 RAG Knowledge Base Ingestion
+## ENVIRONMENT VARIABLES
 
-The Retrieval-Augmented Generation (RAG) engine vector-searches official NCERT textbook knowledge base chunks stored in the `document_chunks` table.
-
-To re-ingest NCERT textbook chapters at any time, run:
-```bash
-python scripts/ingest_knowledge.py
-```
-This parses textbooks, tokenizes text, calculates TF-IDF vector terms, and indexes chunks without adding fake user data.
+| Variable Name | Description | Default Value |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | Relational database connection string | `sqlite:///./shikshaai.db` |
+| `POSTGRES_DB` | PostgreSQL database name | `shikshaai` |
+| `POSTGRES_USER` | PostgreSQL username | `shiksha_user` |
+| `POSTGRES_PASSWORD` | PostgreSQL password | `shiksha_password` |
+| `POSTGRES_PORT` | PostgreSQL port | `5432` |
+| `JWT_SECRET` | Secret key for signing JWT access tokens | Configured in `.env` |
+| `GEMINI_API_KEY` | Google Gemini 1.5 Flash API Key | Configured in `.env` |
+| `CORS_ORIGINS` | Allowed frontend CORS origins | `http://localhost:3000` |
+| `NEXT_PUBLIC_API_URL` | API base URL for frontend client | `http://localhost:8000/api/v1` |
 
 ---
 
-## 🧪 Testing & Verification Suite
+## TESTING
 
-Run automated test suites to verify 100% functionality:
+Run the comprehensive test suite verifying 100% real user flow, RBAC security boundaries, and dynamic analytics:
 
 ```bash
-# 1. Run 17-Step Real User Flow Test:
-python backend/test_real_user_flow.py
-
-# 2. Run Comprehensive Acceptance Test Suite:
+# Execute Master Acceptance Test Suite:
 python backend/test_final_acceptance_suite.py
 
-# 3. Run Security & RBAC Isolation Audit:
-python backend/test_security_audit.py
+# Execute Real User Flow Test:
+python backend/test_real_user_flow.py
 
-# 4. Run Frontend TypeScript Typecheck & Production Build:
-cd frontend
-npx tsc --noEmit
-npm run build
+# Execute Security & Data Isolation Audit:
+python backend/test_security_audit.py
 ```
 
 ---
 
-## 🔧 Troubleshooting Guide
+## PROJECT STRUCTURE
 
-| Issue / Error | Root Cause | Solution |
-| :--- | :--- | :--- |
-| **`Docker not running`** | Docker Desktop is stopped. | Start Docker Desktop application and wait for the daemon status to turn green. |
-| **`Port 5432 or 8000 in use`** | Another service occupies port 5432 or 8000. | Change `POSTGRES_PORT=5433` in `.env` or kill occupying process: `Stop-Process -Id (Get-NetTCPConnection -LocalPort 8000).OwningProcess`. |
-| **`Database connection failed`** | `DATABASE_URL` incorrect or container starting. | Ensure `DATABASE_URL` in `.env` matches container credentials or use default SQLite `sqlite:///./shikshaai.db`. |
-| **`AI Provider API Key missing`** | `GEMINI_API_KEY` unconfigured. | Get a free API key at [Google AI Studio](https://aistudio.google.com) and paste into `.env`. System will fall back to local NCERT templates if unconfigured. |
-| **`CORS Policy Error`** | Frontend origin blocked by API. | Add your frontend URL (e.g. `http://localhost:3000`) to `CORS_ORIGINS` in `.env`. |
-| **`ModuleNotFoundError in Python`** | Virtual environment not activated. | Run `source backend/venv/bin/activate` or use `backend\venv\Scripts\python.exe`. |
+```
+Shiksha-AI/
+├── .env.example               # Root environment variable template
+├── .nvmrc                     # Node.js version lock file (v20.11.0)
+├── .python-version            # Python version lock file (v3.11.0)
+├── docker-compose.yml         # PostgreSQL + pgvector infrastructure container
+├── SETUP.md                   # Clean machine setup manual
+├── DEMO.md                    # Live demonstration guide
+├── scripts/
+│   ├── ingest_knowledge.py    # NCERT RAG knowledge ingestion script
+│   ├── setup.ps1 / setup.sh   # One-command automated setup scripts
+│   ├── start.ps1 / start.sh   # One-command server startup scripts
+│   └── reset.ps1 / reset.sh   # Local development database reset scripts
+├── backend/
+│   ├── app/
+│   │   ├── core/              # Security, RAG engine, Vision engine, Constants
+│   │   ├── db/                # Database models & Session initialization
+│   │   ├── routers/           # FastAPI routers (Auth, Student, Teacher, Tutor, etc.)
+│   │   └── schemas/           # Pydantic V2 request & response schemas
+│   ├── reset_and_seed_content.py
+│   ├── requirements.txt
+│   ├── test_real_user_flow.py
+│   ├── test_final_acceptance_suite.py
+│   └── test_security_audit.py
+└── frontend/
+    ├── src/
+    │   ├── app/               # Next.js App Router pages (dashboard, tutor, teacher, etc.)
+    │   ├── components/        # Reusable UI components & ProtectedRoute
+    │   ├── context/           # AuthContext provider
+    │   ├── lib/               # Axios API client & utility functions
+    │   └── types/             # TypeScript interfaces
+    ├── package.json
+    └── tsconfig.json
+```
 
 ---
 
-## 📜 License
-Licensed under the [MIT License](LICENSE).
+## SECURITY
+
+- **Authentication**: Salted password hashing via Bcrypt (`passlib`) and signed HS256 JWT access tokens.
+- **Role-Based Access Control (RBAC)**: Enforced via FastAPI dependencies (`require_student`, `require_teacher`).
+- **Data Isolation**: Student data endpoints filter strictly by `current_user.id`. Teachers can only access students enrolled in their assigned classes via `verify_teacher_class_access()`.
+- **Input Validation**: Request bodies validated via strict Pydantic V2 schemas; file uploads capped at 5 MB with MIME type filtering (`image/jpeg`, `image/png`, `image/webp`).
+
+---
+
+## LIMITATIONS
+
+- **RAG Vector Search**: Local in-database TF-IDF cosine similarity search is optimized for NCERT curriculum chapters. Scaling to millions of textbook pages will benefit from migrating to `pgvector` HNSW indexes.
+- **LLM Dependency**: Live AI tutoring requires internet access for Google Gemini API calls. If disconnected, system gracefully degrades to local NCERT textbook template responses.
+
+---
+
+## FUTURE SCOPE
+
+- **Offline PWA Sync**: ServiceWorker local caching for offline practice in rural low-bandwidth areas.
+- **Voice Multilingual Querying**: Speech-to-text integration using OpenAI Whisper for regional voice input.
