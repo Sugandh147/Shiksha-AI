@@ -48,12 +48,20 @@ def run_security_audit_suite():
 
     # ── 2. Password Hashing Security ─────────────────────────────────────────
     print("\nTEST 2: Verifying Bcrypt Password Hashing Security...")
+    # Register test user to verify hashing
+    reg_sec = client.post("/api/v1/auth/register", json={
+        "email": "sec.student@shikshaai.in",
+        "full_name": "Security Test Student",
+        "password": "SecretPassword123!",
+        "role": "student"
+    })
+    assert reg_sec.status_code in [200, 201]
     db = SessionLocal()
-    u = db.query(User).filter(User.email == "arjun.mehta@student.in").first()
+    u = db.query(User).filter(User.email == "sec.student@shikshaai.in").first()
     db.close()
     assert u is not None
     assert u.password_hash.startswith("$2b$") or u.password_hash.startswith("$2a$"), "Passwords must use Bcrypt salt hashing"
-    assert u.password_hash != "student123", "Raw passwords must never be stored in plain text"
+    assert u.password_hash != "SecretPassword123!", "Raw passwords must never be stored in plain text"
     print("   ✅ PASS: Password hashing verified (Bcrypt salted hash)")
 
     # ── 3. JWT Signature Integrity & Token Forgery Rejection ───────────────────
@@ -65,7 +73,7 @@ def run_security_audit_suite():
 
     # ── 4. Student Auth & RBAC Isolation ──────────────────────────────────────
     print("\nTEST 4: Verifying Student Authentication & RBAC Boundary...")
-    s_login = client.post("/api/v1/auth/login", json={"email": "arjun.mehta@student.in", "password": "student123"})
+    s_login = client.post("/api/v1/auth/login", json={"email": "sec.student@shikshaai.in", "password": "SecretPassword123!"})
     assert s_login.status_code == 200
     s_token = s_login.json()["access_token"]
     s_headers = {"Authorization": f"Bearer {s_token}"}
@@ -77,9 +85,14 @@ def run_security_audit_suite():
 
     # ── 5. Teacher Class & Student Access Boundaries ───────────────────────────
     print("\nTEST 5: Verifying Teacher Data Isolation Boundaries...")
-    t_login = client.post("/api/v1/auth/login", json={"email": "priya.sharma@shikshaai.in", "password": "teacher123"})
-    assert t_login.status_code == 200
-    t_token = t_login.json()["access_token"]
+    reg_t = client.post("/api/v1/auth/register", json={
+        "email": "sec.teacher@shikshaai.in",
+        "full_name": "Security Test Teacher",
+        "password": "SecretPassword123!",
+        "role": "teacher"
+    })
+    assert reg_t.status_code in [200, 201]
+    t_token = reg_t.json()["access_token"]
     t_headers = {"Authorization": f"Bearer {t_token}"}
 
     # Teacher trying to access unassigned class (e.g. Class #999) -> 403 Forbidden

@@ -147,15 +147,12 @@ function ClassPulseContent() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       {/* Top Navbar */}
-      <header className="glass sticky top-0 z-40 px-6 py-4 border-b" style={{ borderColor: "var(--color-border)" }}>
-        <div className="container max-w-7xl mx-auto flex items-center justify-between">
+      <header className="glass-nav sticky top-0 z-40 py-3.5">
+        <div className="app-container flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
-              style={{ background: "linear-gradient(135deg, #6366f1, #10b981)" }}
-            >
+            <Link href="/" className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ background: "linear-gradient(135deg, #6366f1, #10b981)" }}>
               <Activity className="w-6 h-6 text-white" />
-            </div>
+            </Link>
             <div>
               <h1 className="font-bold text-lg leading-none">
                 Class<span className="gradient-text">Pulse</span>
@@ -207,7 +204,7 @@ function ClassPulseContent() {
       </header>
 
       {/* Main Dashboard Layout */}
-      <main className="flex-1 container max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <main className="flex-1 app-container py-8 space-y-8">
         {error && (
           <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center justify-between">
             <span>{error}</span>

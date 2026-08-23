@@ -34,7 +34,7 @@ function OpportunityMatchContent() {
   const [matches, setMatches] = useState<OpportunityMatchOut[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeFilter, setActiveFilter] = useState<"all" | "high" | "verified" | "demo">("all");
+  const [activeFilter, setActiveFilter] = useState<"all" | "high" | "verified">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -61,7 +61,6 @@ function OpportunityMatchContent() {
     const opp = m.opportunity;
     if (activeFilter === "high" && m.match_score < 80) return false;
     if (activeFilter === "verified" && opp.is_demo) return false;
-    if (activeFilter === "demo" && !opp.is_demo) return false;
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -77,8 +76,8 @@ function OpportunityMatchContent() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       {/* Top Navbar */}
-      <header className="glass sticky top-0 z-40 px-6 py-4 border-b" style={{ borderColor: "var(--color-border)" }}>
-        <div className="container max-w-6xl mx-auto flex items-center justify-between">
+      <header className="glass-nav sticky top-0 z-40 py-3.5">
+        <div className="app-container flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="btn btn-secondary py-1.5 px-3 text-xs flex items-center gap-1.5">
               <ArrowLeft className="w-4 h-4" /> Dashboard
@@ -106,7 +105,7 @@ function OpportunityMatchContent() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 container max-w-6xl mx-auto px-6 py-8 space-y-8">
+      <main className="flex-1 app-container py-8 space-y-8">
         {/* Banner */}
         <div className="gradient-card rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border" style={{ borderColor: "rgba(245, 158, 11, 0.3)" }}>
           <div className="space-y-2 max-w-2xl">
@@ -163,13 +162,6 @@ function OpportunityMatchContent() {
             >
               Verified Public
             </button>
-            <button
-              onClick={() => setActiveFilter("demo")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${activeFilter === "demo" ? "bg-indigo-500 text-white shadow-md" : "bg-surface border text-muted hover:text-white"}`}
-              style={activeFilter !== "demo" ? { borderColor: "var(--color-border)" } : {}}
-            >
-              Demo / Sample
-            </button>
           </div>
         </div>
 
@@ -199,15 +191,9 @@ function OpportunityMatchContent() {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        {opp.is_demo ? (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
-                            [DEMO / SAMPLE OPPORTUNITY]
-                          </span>
-                        ) : (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider flex items-center gap-1">
-                            <ShieldCheck className="w-3 h-3" /> VERIFIED PUBLIC SCHOLARSHIP
-                          </span>
-                        )}
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider flex items-center gap-1">
+                          <ShieldCheck className="w-3 h-3" /> VERIFIED PUBLIC SCHOLARSHIP
+                        </span>
                         <span className="text-xs text-muted font-medium">&bull; Source: {opp.official_source}</span>
                       </div>
                       <h3 className="text-xl font-extrabold text-white">{opp.name}</h3>

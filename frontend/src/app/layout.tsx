@@ -51,7 +51,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body className="min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white" style={{ background: "var(--color-bg)", color: "var(--color-text)" }}>
+      <body className="min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white" style={{ background: "#fff", color: "#0f172a" }}>
         <AuthProvider>
           <ToastProvider>
             {children}

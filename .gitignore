@@ -1,11 +1,15 @@
-# ── Environment & Secrets ───────────────────────────────────────────────────
+# ── Environment & Secrets (NEVER commit real .env files) ────────────────────
 .env
 .env.local
 .env.*.local
-!.env.example
 backend/.env
 frontend/.env.local
 frontend/.env*.local
+
+# Always keep .env.example templates — cloners need these
+!.env.example
+!backend/.env.example
+!frontend/.env.example
 
 # ── Python / Backend ──────────────────────────────────────────────────────────
 __pycache__/
@@ -30,7 +34,7 @@ venv/
 env/
 ENV/
 
-# ── Databases & Infrastructure Local Storage ───────────────────────────────
+# ── Databases & Local Storage ─────────────────────────────────────────────────
 *.db
 *.sqlite
 *.sqlite3

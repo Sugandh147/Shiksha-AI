@@ -120,8 +120,8 @@ function StudentDashboardContent() {
   return (
     <div className="min-h-screen" style={{ background: "var(--color-bg)" }}>
       {/* ── Top Navbar ─────────────────────────────────────────────────── */}
-      <nav className="glass sticky top-0 z-40 px-6 py-4 border-b" style={{ borderColor: "var(--color-border)" }}>
-        <div className="container flex items-center justify-between">
+      <nav className="glass-nav sticky top-0 z-40 py-3.5">
+        <div className="app-container flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg"
@@ -164,7 +164,7 @@ function StudentDashboardContent() {
         </div>
       </nav>
 
-      <div className="container px-6 py-8 max-w-7xl mx-auto space-y-8">
+      <div className="app-container py-8 space-y-8">
         {/* ── 1. Welcome Banner ─────────────────────────────────────────── */}
         <div className="gradient-card rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden border" style={{ borderColor: "rgba(99,102,241,0.2)" }}>
           <div className="relative z-10 max-w-2xl">

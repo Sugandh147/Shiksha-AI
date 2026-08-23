@@ -22,16 +22,25 @@ client = TestClient(app)
 def run_opportunity_match_tests():
     print("\n🏆 Running OpportunityMatch Module Automated Test Suite...\n" + "─"*65)
 
-    # 1. Login Student
-    print("1. Logging in student (arjun.mehta@student.in)...")
-    login_resp = client.post("/api/v1/auth/login", json={
-        "email": "arjun.mehta@student.in",
-        "password": "student123"
+    # 1. Register / Login Student
+    print("1. Registering student (opp.student@shikshaai.in)...")
+    reg_resp = client.post("/api/v1/auth/register", json={
+        "email": "opp.student@shikshaai.in",
+        "full_name": "Opportunity Test Student",
+        "password": "Password123!",
+        "role": "student"
     })
-    assert login_resp.status_code == 200, f"Login failed: {login_resp.text}"
-    token = login_resp.json()["access_token"]
+    if reg_resp.status_code == 200:
+        token = reg_resp.json()["access_token"]
+    else:
+        login_resp = client.post("/api/v1/auth/login", json={
+            "email": "opp.student@shikshaai.in",
+            "password": "Password123!"
+        })
+        assert login_resp.status_code == 200, f"Login failed: {login_resp.text}"
+        token = login_resp.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
-    print("   ✅ Student Logged In")
+    print("   ✅ Student Authenticated")
 
     # 2. Test GET /api/v1/opportunities
     print("\n2. Testing GET /api/v1/opportunities...")
