@@ -7,7 +7,7 @@
  * Role is pre-selected from the URL query param: ?role=student or ?role=teacher
  */
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BookOpen, ArrowRight, AlertCircle, GraduationCap, Users } from "lucide-react";
@@ -15,6 +15,18 @@ import { useAuth } from "@/context/AuthContext";
 import { UserRole } from "@/types";
 
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full animate-spin border-2 border-indigo-500 border-t-transparent" />
+      </div>
+    }>
+      <RegisterContent />
+    </Suspense>
+  );
+}
+
+function RegisterContent() {
   const { register } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
