@@ -4,14 +4,13 @@
  * src/app/(auth)/login/page.tsx
  * ──────────────────────────────
  * Authentic Real-User Login Page for ShikshaAI.
- * Redesigned with unified app-container, dark glassmorphism,
- * responsive typography, password visibility toggle, and error alert handling.
+ * Light Theme — Clean, modern SaaS aesthetic matching the landing page.
  */
 
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, BookOpen, ArrowRight, AlertCircle, Sparkles, Brain, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, AlertCircle, Sparkles, Brain, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
@@ -61,96 +60,121 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center py-12 relative overflow-hidden" style={{ background: "var(--color-bg)" }}>
-      {/* Background Radial Ambient Glows */}
+    <div style={{ background: "#f8f9fc", minHeight: "100vh" }} className="flex flex-col justify-center py-12 px-4 relative overflow-hidden">
+      {/* Soft Background Ambient Accents */}
       <div
-        className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full opacity-15 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #6366f1, transparent)" }}
+        className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(91,76,245,0.06) 0%, transparent 70%)" }}
       />
       <div
-        className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #10b981, transparent)" }}
+        className="absolute bottom-0 left-1/4 w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(6,182,212,0.06) 0%, transparent 70%)" }}
       />
 
-      <div className="app-container relative z-10">
-        <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      <div className="container-page relative z-10">
+        <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
           
-          {/* LEFT COLUMN: HERO BRANDING & VALUE PROPOSITION */}
-          <div className="space-y-6 text-center lg:text-left hidden sm:block">
-            <Link href="/" className="inline-flex items-center gap-3">
+          {/* LEFT COLUMN: BRANDING & VALUE PROPOSITION */}
+          <div className="space-y-6 text-left hidden lg:block">
+            <Link href="/" className="inline-flex items-center gap-3 text-decoration-none">
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl"
-                style={{ background: "linear-gradient(135deg, #6366f1, #10b981)" }}
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 14,
+                  background: "linear-gradient(135deg, #5b4cf5 0%, #7c6ff9 100%)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 4px 14px rgba(91,76,245,0.3)"
+                }}
               >
-                <Brain className="w-6 h-6 text-white" />
+                <Brain size={24} color="#ffffff" />
               </div>
-              <span className="text-3xl font-extrabold tracking-tight">
-                Shiksha<span className="gradient-text">AI</span>
+              <span className="text-2xl font-extrabold tracking-tight text-slate-900">
+                Shiksha<span style={{ color: "#5b4cf5" }}>AI</span>
               </span>
             </Link>
 
             <div className="space-y-3">
-              <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight tracking-tight">
+              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-slate-900">
                 Personalized learning, <br />
-                <span className="gradient-text">powered by AI.</span>
+                <span className="text-gradient">powered by AI.</span>
               </h1>
-              <p className="text-sm text-muted max-w-md leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed max-w-sm">
                 ShikshaAI combines baseline diagnostics, NCERT-grounded RAG tutoring, adaptive practice, and real-time teacher intelligence.
               </p>
             </div>
 
             {/* Feature Highlights */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-3 text-xs font-semibold">
-                <div className="w-7 h-7 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
-                  <Brain className="w-4 h-4" />
+            <div className="space-y-3.5 pt-2">
+              <div className="flex items-center gap-3 text-xs font-semibold text-slate-700">
+                <div style={{ width: 30, height: 30, borderRadius: 10, background: "#ede9fe", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Brain size={16} color="#5b4cf5" />
                 </div>
                 <span>Grounding in official NCERT textbooks with citations</span>
               </div>
-              <div className="flex items-center gap-3 text-xs font-semibold">
-                <div className="w-7 h-7 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4" />
+              <div className="flex items-center gap-3 text-xs font-semibold text-slate-700">
+                <div style={{ width: 30, height: 30, borderRadius: 10, background: "#d1fae5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Sparkles size={16} color="#059669" />
                 </div>
                 <span>Multilingual support in English, Hindi & Hinglish</span>
               </div>
-              <div className="flex items-center gap-3 text-xs font-semibold">
-                <div className="w-7 h-7 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-4 h-4" />
+              <div className="flex items-center gap-3 text-xs font-semibold text-slate-700">
+                <div style={{ width: 30, height: 30, borderRadius: 10, background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <ShieldCheck size={16} color="#d97706" />
                 </div>
                 <span>ClassPulse real-time teacher risk intelligence</span>
               </div>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: POLISHED LOGIN CARD */}
-          <div className="w-full max-w-md mx-auto space-y-6">
-            {/* Mobile Logo Header */}
-            <div className="text-center sm:hidden mb-4">
-              <Link href="/" className="inline-flex items-center gap-2 mb-2">
+          {/* RIGHT COLUMN: LIGHT THEME LOGIN CARD */}
+          <div className="w-full max-w-md mx-auto">
+            
+            {/* Header for Mobile */}
+            <div className="text-center lg:hidden mb-6">
+              <Link href="/" className="inline-flex items-center gap-2 mb-2 text-decoration-none">
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, #6366f1, #10b981)" }}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 12,
+                    background: "linear-gradient(135deg, #5b4cf5 0%, #7c6ff9 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
                 >
-                  <Brain className="w-5 h-5 text-white" />
+                  <Brain size={20} color="#ffffff" />
                 </div>
-                <span className="text-2xl font-bold">
-                  Shiksha<span className="gradient-text">AI</span>
+                <span className="text-xl font-extrabold text-slate-900">
+                  Shiksha<span style={{ color: "#5b4cf5" }}>AI</span>
                 </span>
               </Link>
-              <p className="text-xs text-muted">Personalized learning, powered by AI.</p>
+              <p className="text-xs text-slate-500">Personalized learning, powered by AI.</p>
             </div>
 
-            <div className="glass-card p-6 sm:p-8 space-y-6">
+            <div
+              style={{
+                background: "#ffffff",
+                borderRadius: 24,
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.03)",
+                padding: "32px"
+              }}
+              className="space-y-6"
+            >
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-white">Sign in to your account</h2>
-                <p className="text-xs text-muted mt-1">Enter your credentials to access your learning workspace</p>
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900">Sign in to your account</h2>
+                <p className="text-xs text-slate-500 mt-1">Enter your credentials to access your learning workspace</p>
               </div>
 
               {/* Error Alert Banner */}
               {error && (
                 <div
-                  className="flex items-start gap-3 p-3.5 rounded-2xl text-xs font-medium animate-in fade-in duration-200"
-                  style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.25)", color: "#ef4444" }}
+                  className="flex items-start gap-3 p-3.5 rounded-xl text-xs font-semibold"
+                  style={{ background: "#fef2f2", border: "1px solid #fecaca", color: "#dc2626" }}
                 >
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                   <span className="leading-relaxed">{error}</span>
@@ -159,11 +183,22 @@ export default function LoginPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-muted mb-1.5 uppercase tracking-wider">Email Address</label>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">
+                    Email Address
+                  </label>
                   <input
                     type="email"
-                    className="w-full bg-surface border rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
-                    style={{ borderColor: "var(--color-border)", color: "var(--color-text)" }}
+                    style={{
+                      width: "100%",
+                      background: "#f8f9fc",
+                      border: "1.5px solid #e2e8f0",
+                      borderRadius: 12,
+                      padding: "11px 16px",
+                      fontSize: 14,
+                      color: "#0f172a",
+                      outline: "none"
+                    }}
+                    className="focus:border-indigo-500 transition-colors"
                     placeholder="name@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData((d) => ({ ...d, email: e.target.value }))}
@@ -173,12 +208,23 @@ export default function LoginPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-muted mb-1.5 uppercase tracking-wider">Password</label>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">
+                    Password
+                  </label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
-                      className="w-full bg-surface border rounded-xl py-3 pl-4 pr-12 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
-                      style={{ borderColor: "var(--color-border)", color: "var(--color-text)" }}
+                      style={{
+                        width: "100%",
+                        background: "#f8f9fc",
+                        border: "1.5px solid #e2e8f0",
+                        borderRadius: 12,
+                        padding: "11px 44px 11px 16px",
+                        fontSize: 14,
+                        color: "#0f172a",
+                        outline: "none"
+                      }}
+                      className="focus:border-indigo-500 transition-colors"
                       placeholder="Enter your password"
                       value={formData.password}
                       onChange={(e) => setFormData((d) => ({ ...d, password: e.target.value }))}
@@ -187,7 +233,7 @@ export default function LoginPage() {
                     />
                     <button
                       type="button"
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-white transition-colors"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
                       onClick={() => setShowPassword((s) => !s)}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
@@ -199,8 +245,8 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn btn-primary w-full py-3 text-sm font-bold glow-indigo flex items-center justify-center gap-2 mt-2"
-                  style={{ opacity: loading ? 0.7 : 1 }}
+                  className="btn-primary w-full py-3 text-sm font-bold flex items-center justify-center gap-2 mt-2"
+                  style={{ opacity: loading ? 0.7 : 1, width: "100%" }}
                 >
                   {loading ? (
                     <span>Signing in...</span>
@@ -212,9 +258,9 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <div className="pt-4 border-t text-center text-xs text-muted" style={{ borderColor: "var(--color-border)" }}>
+              <div className="pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
                 Don&apos;t have an account yet?{" "}
-                <Link href="/register" className="font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+                <Link href="/register" className="font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
                   Create Account
                 </Link>
               </div>
