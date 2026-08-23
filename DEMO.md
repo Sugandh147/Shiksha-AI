@@ -1,114 +1,124 @@
-# ShikshaAI — 3 to 5 Minute Live Hackathon Demonstration Script
+# ShikshaAI — Live Hackathon Demonstration Guide (Real User Accounts)
 
-**Presentation Target**: 3 – 5 Minutes  
-**Key Value Proposition**: AI-powered personalized EdTech platform designed for Indian K-12 education, combining Grounded RAG Tutoring, Adaptive Practice, and ClassPulse Teacher Intelligence.
+This guide walks you through conducting a **live, 3 to 5-minute hackathon demonstration** of **ShikshaAI** using **real user accounts created live by you** during the presentation.
 
----
-
-## 🔑 Demo Login Credentials
-
-> **STUDENT DEMO PERSONA**
-> - **Email**: `arjun.mehta@student.in`
-> - **Password**: `student123`
-> - **Grade**: Class 8
-> - **Target Weak Topic**: *Algebra — Linear & Quadratic Equations* (38.6% Mastery)
-
-> **TEACHER DEMO PERSONA**
-> - **Email**: `priya.sharma@shikshaai.in`
-> - **Password**: `teacher123`
-> - **Class Name**: Class 8 - Section A (10 Enrolled Students)
+> [!IMPORTANT]
+> **Zero Fake / Fictional User Accounts**:
+> The application starts with an empty user database (**0 Users, 0 Classes, 0 Attempts**). You will register your own teacher and student accounts live through the standard registration UI.
 
 ---
 
-## ⏱️ 3–5 Minute Presentation Narrative Flow
+## 🛠️ Step 0: Prerequisite Setup & Database Reset
+
+Before your presentation, ensure your database is clean and ready for real registration:
+
+1. **Reset Database to 0 Users (Leaves Educational Content Intact)**:
+   ```powershell
+   python backend/reset_and_seed_content.py
+   ```
+2. **Start Backend Server**:
+   ```powershell
+   cd backend
+   uvicorn app.main:app --reload
+   ```
+3. **Start Frontend Web Application**:
+   ```powershell
+   cd frontend
+   npm run dev
+   ```
+4. **Open Browser**: Navigate to `http://localhost:3000`.
+
+---
+
+## ⏱️ 3 to 5-Minute Live Demonstration Narrative
 
 ```
-[0:00 - 0:45] ACT I   : The Student Problem & Diagnostic Discovery
-[0:45 - 2:00] ACT II  : Grounded RAG AI Tutor & Multilingual Explanation
-[2:00 - 3:00] ACT III : Adaptive Practice & Real-Time SkillMastery Gain
-[3:00 - 4:15] ACT IV  : ClassPulse Teacher Intelligence & AI Copilot
-[4:15 - 5:00] ACT V   : Opportunity Matcher & Hackathon Wrap-Up
+[0:00 - 0:45] ACT I   : Teacher Registration, Class Creation & Join Code Generation
+[0:45 - 2:00] ACT II  : Student Registration, Onboarding & Diagnostic Quiz
+[2:00 - 3:00] ACT III : Grounded RAG AI Tutor & Real-Time Adaptive Practice
+[3:00 - 4:15] ACT IV  : Class Join & Live ClassPulse Teacher Intelligence
+[4:15 - 5:00] ACT V   : Opportunity Matcher & Presentation Wrap-Up
 ```
 
 ---
 
-### ACT I: The Student Problem & Diagnostic Discovery (0:00 – 0:45)
+### ACT I: Teacher Registration, Class Creation & Join Code (0:00 – 0:45)
 
-1. **Open Browser** to `http://localhost:3000`.
-2. **Talking Point**: *"India has over 250 million students, but most lack access to 1-on-1 personalized tutoring. ShikshaAI bridges this gap."*
-3. **Click `Login`** in header → Enter `arjun.mehta@student.in` / `student123` → Click **Login**.
-4. **Student Dashboard loads**: Point out:
-   - **Streak Counter**: `7 Days 🔥`
-   - **XP Points**: `450 XP ⚡`
-   - **Weak Topic Banner**: *"Attention: Algebra (38.6% Mastery)"* highlighted in red.
-5. **Talking Point**: *"ShikshaAI doesn't just ask students to practice randomly. Our diagnostic engine automatically identifies Arjun's single weakest topic: Algebra."*
+1. Open `http://localhost:3000` in your main browser window.
+2. Click **Register** → Enter your name, email, password, and select **Role: Teacher**.
+3. Click **Sign Up** → Log in with your new teacher account.
+4. On the **Teacher Dashboard (`/teacher`)**, point out the initial clean empty state:
+   - *"No classes or students registered yet."*
+5. Click the **`+ Create Class`** button in the navbar:
+   - **Class Name**: Enter `Grade 8 Mathematics`
+   - **Grade Level**: Enter `8`
+   - Click **Create Class**.
+6. Note the **6-Character Class Join Code** displayed in the notification (e.g. `MATH8A`).
+7. **Talking Point**: *"Teachers can create classes in seconds and distribute a simple 6-character join code to their students."*
 
 ---
 
-### ACT II: Grounded RAG AI Tutor & Multilingual Learning (0:45 – 2:00)
+### ACT II: Student Registration, Onboarding & Diagnostic Quiz (0:45 – 2:00)
 
-1. **Click `Ask AI Tutor`** button on the Algebra weak topic card (navigates to `/tutor`).
-2. **Select Language**: Click language dropdown in header/chat → Select **Hinglish (`hi-en`)**.
-3. **Type Question**:
-   > *"Explain linear equations step by step with a real life example."*
-4. **Click Send**:
-   - Point out **Grounded NCERT Textbook Citations** rendered below response:
+1. Open an **Incognito / Private Window** (or second browser) to `http://localhost:3000`.
+2. Click **Register** → Enter your student name, email, password, and select **Role: Student**.
+3. Click **Sign Up** → Log in with your new student account.
+4. **Student Onboarding (`/onboarding`)**:
+   - Select **Grade 8**, **Mathematics**, and preferred language (**Hinglish** or **English**).
+   - Enter your learning goal → Click **Complete Profile**.
+5. **Take Diagnostic Quiz (`/diagnostic`)**:
+   - Answer the diagnostic questions.
+   - Click **Submit Diagnostic Quiz**.
+6. **Student Dashboard (`/dashboard`)**:
+   - Point out your actual calculated diagnostic score and identified **Weak Topic** (e.g., *Algebra* at <70% mastery).
+7. **Talking Point**: *"ShikshaAI automatically assesses a student's baseline knowledge and pinpoints their exact topic-level weaknesses in real time."*
+
+---
+
+### ACT III: Grounded RAG AI Tutor & Real-Time Adaptive Practice (2:00 – 3:00)
+
+1. **Ask AI Tutor (`/tutor`)**:
+   - Click **Ask AI Tutor** on your weak topic card.
+   - Select **Hinglish (`hi-en`)** or **English**.
+   - Type: *"Explain linear equations step by step with a real life example."*
+   - Click **Send**.
+   - Point out the **NCERT Source Cards** attached below the response:
      - *NCERT Mathematics Class 8 — Chapter 2: Linear Equations in One Variable*
-     - *NCERT Mathematics Class 10 — Chapter 4: Quadratic Equations*
-5. **Talking Point**: *"Unlike generic chatbots that hallucinate math answers, ShikshaAI uses Retrieval-Augmented Generation (RAG) over trusted NCERT textbooks. Every answer is strictly grounded with verifiable source citations, and presented in the student's comfortable language."*
-6. **Show 📷 Vision AI Solver (Optional 15-sec demo)**:
-   - Click **Scan Question Photo** icon → Select sample equation photo (`test_math.jpg`) → Instant step-by-step extraction!
+2. **Talking Point**: *"Unlike generic LLMs that hallucinate math formulas, ShikshaAI grounds every response in official NCERT textbooks with explicit verifiable citations."*
+3. **Adaptive Practice (`/practice`)**:
+   - Click **Practice Weak Topic** → Answer a practice question.
+   - Submit answer → See **+15 XP** awarded.
+   - Return to **Dashboard (`/dashboard`)** → Point out your topic mastery score and total XP live updating in PostgreSQL.
 
 ---
 
-### ACT III: Adaptive Practice & SkillMastery Gain (2:00 – 3:00)
+### ACT IV: Class Join & Live ClassPulse Teacher Intelligence (3:00 – 4:15)
 
-1. **Click `Practice Weak Topic`** button directly from Tutor view or navigation bar (`/practice`).
-2. **Adaptive Practice Set generated**: Point out initial difficulty: `Medium`.
-3. **Answer Question 1 Correctly**: Select correct choice `A` → Click **Submit Answer**.
-   - Point out: **+15 XP Awarded** green toast notification!
-   - Point out: Difficulty automatically escalates to `Hard` for the next question.
-4. **Answer Question 2 Incorrectly (Intentionally)**: Select wrong choice `B` → Click **Submit Answer**.
-   - Point out: **Step-by-Step Remediation Modal** triggers explaining why choice B was incorrect and showing the correct formula.
-5. **Return to Dashboard (`/dashboard`)**:
-   - Point out: Arjun's Algebra mastery score live updated from **38.6% → 52.4%**!
-
----
-
-### ACT IV: ClassPulse Teacher Intelligence & AI Copilot (3:00 – 4:15)
-
-1. **Click `Logout`** → Click **Login** → Enter `priya.sharma@shikshaai.in` / `teacher123`.
-2. **Teacher Dashboard (`/teacher`) loads**:
-   - Point out **ClassPulse Analytics**: Class average mastery = `62.8%`.
-   - Point out **Learning Attention Indicator**: 3 students flagged needing attention.
-   - Point out **Arjun Mehta** flagged with **High Risk** due to low initial algebra score.
-3. **Click Arjun Mehta's profile**: View deep insights, recent quiz attempts, and recommended 1-on-1 intervention notes.
-4. **Open Teacher Copilot**:
-   - Type prompt:
-     > *"Which students in Class 8 need urgent help with algebra?"*
-   - Response instantly details Arjun Mehta and 2 other struggling students with actionable teaching recommendations!
-5. **Talking Point**: *"ClassPulse gives teachers superpower visibility. Instead of grading endless papers, teachers get real-time diagnostic risk flags and AI-powered copilot recommendations."*
+1. On the Student Dashboard (`/dashboard`), click the **`+ Join Class`** button in the header.
+2. Enter the **6-character Join Code** generated in Act I (e.g., `MATH8A`) → Click **Join Class**.
+3. **Switch to Teacher Browser Tab**:
+   - Refresh or select your class in the dropdown on `/teacher`.
+4. Point out **ClassPulse Live Analytics**:
+   - **Total Students**: Updated from `0 → 1`
+   - **Learning Attention Indicator**: Shows your student account with an objective risk rating based on live diagnostic performance.
+5. **Teacher Copilot Q&A**:
+   - Open Teacher Copilot → Type: *"Which students in my class need urgent help with algebra?"*
+   - Click **Ask Copilot**.
+   - Show Teacher Copilot analyzing live database metrics to recommend targeted 1-on-1 teaching interventions.
 
 ---
 
-### ACT V: Opportunity Matcher & Hackathon Wrap-Up (4:15 – 5:00)
+### ACT V: Opportunity Matcher & Wrap-Up (4:15 – 5:00)
 
-1. **Click `Opportunities`** in navigation bar (`/opportunities`).
-2. **Show Opportunity Matcher**:
-   - Point out personalized scholarship matches: *KVPY STEM Fellowship*, *PM Young Achievers Scholarship*, *National Talent Search Examination (NTSE)*.
-   - Match Score breakdown based on grade, subjects, and mastery.
-3. **Closing Statement**: *"ShikshaAI is not just a tool—it's a complete intelligent learning environment empowering 250 million Indian students and teachers."*
+1. On the Student Window, click **Opportunities (`/opportunities`)**.
+2. Show personalized STEM scholarships matched to your student's grade and mastery profile (e.g. *KVPY STEM Fellowship*, *NTSE*).
+3. **Closing Pitch**: *"ShikshaAI delivers closed-loop personalized tutoring grounded in official NCERT textbooks while giving teachers real-time diagnostic superpowers."*
 
 ---
 
-## 🛡️ Backup Demo Path (If External APIs or Internet Fails)
+## 🛡️ Robustness & Graceful Fallbacks
 
 > [!TIP]
-> If external LLM APIs experience rate limits or connectivity dropouts during live presentation, ShikshaAI has built-in offline fallbacks:
-
-1. **AI Tutor Fallback**: If Gemini API call fails, RAG engine automatically activates local grounded pedagogical template logic, returning pre-tokenized NCERT solutions with zero downtime.
-2. **Vision AI Fallback**: If OCR vision API times out, `VisionEngine` fallback uses deterministic equation parsing to render problem steps instantly.
-3. **Deterministic Seed Verification**: You can reset the database to clean demo state at any time by executing:
-   ```powershell
-   $env:PYTHONIOENCODING="utf-8"; python backend/seed_data.py
-   ```
+> If external LLM API rate limits occur during live presentation:
+> 1. **RAG Engine Fallback**: If Gemini times out, `RAGEngine` automatically retrieves grounded NCERT textbook snippets directly from SQLite database records without crashing.
+> 2. **Authentication Isolation**: Using Incognito windows for the student account prevents session cookie overlap between student and teacher roles.
