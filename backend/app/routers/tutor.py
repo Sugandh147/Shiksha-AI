@@ -123,6 +123,17 @@ def chat_with_ai_tutor(
         for s in rag_result["sources"]
     ]
 
+    from app.schemas.tutor import VideoResource
+    video_payload = [
+        VideoResource(
+            title=v["title"],
+            channel_name=v["channel_name"],
+            video_url=v["video_url"],
+            thumbnail_url=v.get("thumbnail_url"),
+        )
+        for v in rag_result.get("video_resources", [])
+    ]
+
     return TutorChatResponse(
         session_id=session.id,
         message_id=ai_msg.id,
@@ -131,6 +142,7 @@ def chat_with_ai_tutor(
         example=rag_result["example"],
         follow_up=rag_result["follow_up"],
         sources=sources_payload,
+        video_resources=video_payload,
     )
 
 

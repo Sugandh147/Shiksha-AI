@@ -15,6 +15,13 @@ class SourceCitation(BaseModel):
     relevance_score: float
 
 
+class VideoResource(BaseModel):
+    title: str
+    channel_name: str
+    video_url: str
+    thumbnail_url: Optional[str] = None
+
+
 class TutorChatRequest(BaseModel):
     message: str = Field(..., min_length=1, description="Student query or prompt text")
     topic_name: Optional[str] = Field(None, description="Current topic context e.g. Quadratic Equations")
@@ -31,6 +38,7 @@ class TutorChatResponse(BaseModel):
     example: str
     follow_up: List[str]
     sources: List[SourceCitation]
+    video_resources: Optional[List[VideoResource]] = None
 
 
 class ImageQuestionSolverResponse(BaseModel):
@@ -42,4 +50,4 @@ class ImageQuestionSolverResponse(BaseModel):
     verification: str
     similar_question: str
     sources: List[SourceCitation]
-
+    video_resources: Optional[List[VideoResource]] = None

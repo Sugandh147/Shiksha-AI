@@ -267,6 +267,13 @@ export interface SourceCitation {
   relevance_score: number;
 }
 
+export interface VideoResource {
+  title: string;
+  channel_name: string;
+  video_url: string;
+  thumbnail_url?: string;
+}
+
 export interface TutorChatRequest {
   message: string;
   topic_name?: string;
@@ -283,6 +290,7 @@ export interface TutorChatResponse {
   example: string;
   follow_up: string[];
   sources: SourceCitation[];
+  video_resources?: VideoResource[];
 }
 
 // ── Adaptive Practice Engine ──────────────────────────────────────────────────

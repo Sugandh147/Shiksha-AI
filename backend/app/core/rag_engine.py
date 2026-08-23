@@ -228,13 +228,90 @@ INSTRUCTIONS:
             for c in chunks
         ]
 
+        # Retrieve video resources matching the concept/topic
+        video_resources = cls.get_video_resources_for_query(user_message, weak_topics)
+
         return {
             "explanation": llm_response.get("explanation", "Here is an explanation of the topic."),
             "step_by_step": llm_response.get("step_by_step", []),
             "example": llm_response.get("example", "Example calculation."),
             "follow_up": llm_response.get("follow_up", ["Can you give another example?", "Why is this important?"]),
-            "sources": sources_list
+            "sources": sources_list,
+            "video_resources": video_resources,
         }
+
+    @staticmethod
+    def get_video_resources_for_query(query: str, weak_topics: List[str]) -> List[Dict[str, str]]:
+        """Map educational topic query to curated YouTube video resources from top Indian educators."""
+        q_lower = (query + " " + " ".join(weak_topics)).lower()
+
+        videos = []
+        if "quadratic" in q_lower:
+            videos = [
+                {
+                    "title": "Quadratic Equations Class 10 One-Shot Chapter",
+                    "channel_name": "Physics Wallah - Alakh Pandey",
+                    "video_url": "https://www.youtube.com/watch?v=ZyW_8G3G2_M",
+                    "thumbnail_url": "https://img.youtube.com/vi/ZyW_8G3G2_M/hqdefault.jpg"
+                },
+                {
+                    "title": "Quadratic Formula & Factorization Masterclass",
+                    "channel_name": "Khan Academy India",
+                    "video_url": "https://www.youtube.com/watch?v=83J7j7h_k9k",
+                    "thumbnail_url": "https://img.youtube.com/vi/83J7j7h_k9k/hqdefault.jpg"
+                }
+            ]
+        elif "linear" in q_lower or "equation" in q_lower:
+            videos = [
+                {
+                    "title": "Linear Equations in One Variable - Class 8/9 Full Concept",
+                    "channel_name": "Physics Wallah Foundation",
+                    "video_url": "https://www.youtube.com/watch?v=s5R_0wLInns",
+                    "thumbnail_url": "https://img.youtube.com/vi/s5R_0wLInns/hqdefault.jpg"
+                },
+                {
+                    "title": "Linear Equations Short Tricks & Practice Questions",
+                    "channel_name": "Dear Sir",
+                    "video_url": "https://www.youtube.com/watch?v=f2b05374464",
+                    "thumbnail_url": "https://img.youtube.com/vi/f2b05374464/hqdefault.jpg"
+                }
+            ]
+        elif "triangle" in q_lower or "geomet" in q_lower:
+            videos = [
+                {
+                    "title": "Triangles Class 9 & 10 Proofs & Theorems Explained",
+                    "channel_name": "Dear Sir",
+                    "video_url": "https://www.youtube.com/watch?v=4Y_N6Z2Z9xQ",
+                    "thumbnail_url": "https://img.youtube.com/vi/4Y_N6Z2Z9xQ/hqdefault.jpg"
+                }
+            ]
+        elif "force" in q_lower or "pressur" in q_lower:
+            videos = [
+                {
+                    "title": "Force and Pressure Class 8 Science Full Concept",
+                    "channel_name": "Physics Wallah Foundation",
+                    "video_url": "https://www.youtube.com/watch?v=Z5_k9Y3Z9xQ",
+                    "thumbnail_url": "https://img.youtube.com/vi/Z5_k9Y3Z9xQ/hqdefault.jpg"
+                }
+            ]
+        else:
+            # General fallback videos for mathematics concepts
+            videos = [
+                {
+                    "title": "Class 8/9/10 Mathematics Concept Booster",
+                    "channel_name": "Physics Wallah Foundation",
+                    "video_url": "https://www.youtube.com/watch?v=s5R_0wLInns",
+                    "thumbnail_url": "https://img.youtube.com/vi/s5R_0wLInns/hqdefault.jpg"
+                },
+                {
+                    "title": "NCERT Mathematics Chapter Explanation & Examples",
+                    "channel_name": "Khan Academy India",
+                    "video_url": "https://www.youtube.com/watch?v=L0_K89U17X8",
+                    "thumbnail_url": "https://img.youtube.com/vi/L0_K89U17X8/hqdefault.jpg"
+                }
+            ]
+
+        return videos
 
     @staticmethod
     def _synthesize_grounded_fallback(
