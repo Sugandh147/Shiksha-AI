@@ -1,16 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
 
 /**
  * src/app/layout.tsx
  * ───────────────────
- * Root layout — wraps every page in the app.
- * This is where we:
- *   • Load Google Fonts (Inter)
- *   • Set HTML metadata (title, description for SEO)
- *   • Wrap the app with AuthProvider (global auth state)
+ * Root layout — wraps every page in the app with Auth & Toast providers.
  */
 
 const inter = Inter({
@@ -19,18 +16,24 @@ const inter = Inter({
   display: "swap",
 });
 
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
-    default: "ShikshaAI — AI for Equitable Education",
+    default: "ShikshaAI — Intelligent Multilingual AI Learning Ecosystem",
     template: "%s | ShikshaAI",
   },
   description:
-    "ShikshaAI provides personalized AI-powered tutoring, adaptive practice, and multi-lingual learning support to bridge the education gap in India.",
-  keywords: ["AI education", "adaptive learning", "NCERT", "India education", "AI tutor"],
+    "ShikshaAI empowers Indian K-12 students with grounded RAG AI tutoring, vision question solving, adaptive practice engines, and teacher intelligence.",
+  keywords: ["AI education", "adaptive learning", "NCERT", "India education", "AI tutor", "ClassPulse"],
   authors: [{ name: "ShikshaAI Team" }],
   openGraph: {
-    title: "ShikshaAI — AI for Equitable Education",
-    description: "Personalized AI tutoring for every Indian student",
+    title: "ShikshaAI — Intelligent Multilingual AI Learning Ecosystem",
+    description: "Personalized AI tutoring and teacher intelligence for India",
     type: "website",
   },
 };
@@ -47,10 +50,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-gray-950 font-sans antialiased">
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
+      <body className="min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white" style={{ background: "var(--color-bg)", color: "var(--color-text)" }}>
         <AuthProvider>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>

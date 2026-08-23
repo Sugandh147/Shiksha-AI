@@ -407,6 +407,40 @@ export interface CopilotQueryResponse {
   recommended_actions: string[];
 }
 
+export interface ImageQuestionSolverResponse {
+  extracted_question: string;
+  problem: string;
+  concept: string;
+  steps: string[];
+  answer: string;
+  verification: string;
+  similar_question: string;
+  sources: SourceCitation[];
+}
+
+export interface OpportunityOut {
+  id: number;
+  name: string;
+  provider: string;
+  description: string;
+  eligibility: string;
+  benefit: string;
+  deadline: string;
+  official_source: string;
+  application_url: string;
+  is_demo: boolean;
+  target_education_level: string;
+  required_subjects: string[];
+  minimum_mastery_score: number;
+}
+
+export interface OpportunityMatchOut {
+  opportunity: OpportunityOut;
+  match_score: number;
+  match_category: string;
+  why_matches: string[];
+}
+
 
 
 

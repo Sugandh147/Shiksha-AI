@@ -31,3 +31,15 @@ class TutorChatResponse(BaseModel):
     example: str
     follow_up: List[str]
     sources: List[SourceCitation]
+
+
+class ImageQuestionSolverResponse(BaseModel):
+    extracted_question: str
+    problem: str
+    concept: str
+    steps: List[str]
+    answer: str
+    verification: str
+    similar_question: str
+    sources: List[SourceCitation]
+

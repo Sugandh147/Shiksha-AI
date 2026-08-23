@@ -35,7 +35,7 @@ from app.db.models import (
     DiagnosticAttempt, QuizAttempt, SkillMastery,
     LearningEvent, LearningEventType,
     ChatSession, ChatMessage,
-    Document, DocumentChunk,
+    Document, DocumentChunk, Opportunity,
 )
 
 import bcrypt
@@ -718,20 +718,120 @@ def seed_documents(db: Session, subjects: dict) -> None:
     print(f"    ✓ Created 2 documents with chunks")
 
 
+def seed_opportunities(db: Session):
+    print("  ➤ Seeding verified public and demo opportunities...")
+    opps = [
+        Opportunity(
+            name="National Means-cum-Merit Scholarship (NMMS)",
+            provider="Ministry of Education, Government of India",
+            description="National scholarship scheme for meritorious students studying in Class 8 to prevent dropouts and support secondary education.",
+            eligibility="Class 8 students, annual parental income < ₹3,50,000, minimum 55% marks in Class 7.",
+            benefit="₹12,000 per annum (₹1,000/month) for Classes 9 to 12.",
+            deadline="2026-10-31",
+            official_source="National Scholarship Portal (NSP)",
+            application_url="https://scholarships.gov.in",
+            is_demo=False,
+            target_education_level="Class 8",
+            required_subjects=["Mathematics", "Science"],
+            minimum_mastery_score=55.0,
+        ),
+        Opportunity(
+            name="Kishore Vaigyanik Protsahan Yojana (KVPY) / INSPIRE Scholarship",
+            provider="Department of Science & Technology (DST), Govt of India",
+            description="Prestigious national fellowship program in basic sciences to encourage students to pursue research careers.",
+            eligibility="Class 8-12 students with high academic proficiency in Mathematics and Science.",
+            benefit="₹80,000 per annum stipend + Annual Contingency Grant of ₹20,000.",
+            deadline="2026-11-15",
+            official_source="DST Govt of India",
+            application_url="https://online-inspire.gov.in",
+            is_demo=False,
+            target_education_level="Class 8",
+            required_subjects=["Mathematics", "Science"],
+            minimum_mastery_score=70.0,
+        ),
+        Opportunity(
+            name="CBSE Science & Mathematics Challenge",
+            provider="Central Board of Secondary Education (CBSE)",
+            description="National competition designed to foster critical thinking, inquiry-based learning, and mathematical problem-solving.",
+            eligibility="Students of Classes 8 to 10 in CBSE affiliated schools.",
+            benefit="National Merit Certificate, entry to Regional Science Camp, and mentorship support.",
+            deadline="2026-09-30",
+            official_source="CBSE Academic Portal",
+            application_url="https://cbseacademic.nic.in",
+            is_demo=False,
+            target_education_level="Class 8",
+            required_subjects=["Mathematics", "Science"],
+            minimum_mastery_score=60.0,
+        ),
+        Opportunity(
+            name="PM YASASVI Young Achievers Scholarship",
+            provider="Ministry of Social Justice and Empowerment, Govt of India",
+            description="Top-class education scholarship scheme for meritorious students studying in identified top schools across India.",
+            eligibility="Class 9 and Class 11 students, annual parental income under ₹2.5 Lakhs.",
+            benefit="₹75,000 per annum for Class 9-10 students; ₹1,25,000 per annum for Class 11-12 students.",
+            deadline="2026-12-15",
+            official_source="National Testing Agency (NTA) YASASVI Portal",
+            application_url="https://yet.nta.ac.in",
+            is_demo=False,
+            target_education_level="Class 8",
+            required_subjects=["Mathematics", "Social Studies"],
+            minimum_mastery_score=50.0,
+        ),
+        Opportunity(
+            name="[DEMO] National Young AI Innovators Challenge",
+            provider="ShikshaAI Partner Educational Foundation (Sample Demo)",
+            description="Clearly labeled demo innovation hackathon where middle school students build AI & math solutions for local community problems.",
+            eligibility="All Class 7 to 10 students with interest in Mathematics & Computer Science.",
+            benefit="Sample Certificate of Merit + ₹25,000 demo project grant.",
+            deadline="2026-09-15",
+            official_source="ShikshaAI Demo Innovation Portal",
+            application_url="https://shiksha.ai/demo-hackathon",
+            is_demo=True,
+            target_education_level="Class 8",
+            required_subjects=["Mathematics", "Science"],
+            minimum_mastery_score=60.0,
+        ),
+        Opportunity(
+            name="[DEMO] STEM Mathematics Olympiad Mock League",
+            provider="National STEM Foundation (Sample Demo League)",
+            description="Clearly labeled demo practice olympiad league to prepare students for international math competitions.",
+            eligibility="Class 8 students with high proficiency in Algebra & Geometry.",
+            benefit="Demo Olympiad Medal + Free Advanced Learning Workshop.",
+            deadline="2026-10-10",
+            official_source="STEM Mock League Portal",
+            application_url="https://shiksha.ai/demo-olympiad",
+            is_demo=True,
+            target_education_level="Class 8",
+            required_subjects=["Mathematics"],
+            minimum_mastery_score=75.0,
+        ),
+    ]
+    for o in opps:
+        db.add(o)
+    db.flush()
+    print(f"    ✓ Seeded {len(opps)} opportunities (4 verified public + 2 demo)")
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main():
     print("\n🌱 ShikshaAI — Seeding database...\n")
+    Base.metadata.create_all(bind=engine)
     db: Session = SessionLocal()
     try:
         # Safety check — don't reseed if data already exists
         existing = db.query(User).first()
         if existing:
-            print("⚠️  Database already has data. Skipping seed to avoid duplicates.")
-            print("   To reseed, run:  DROP DATABASE shikshaai; CREATE DATABASE shikshaai;")
-            print("   Then re-run migrations and this script.\n")
+            # Check if opportunities exist
+            opp_count = db.query(Opportunity).count()
+            if opp_count == 0:
+                seed_opportunities(db)
+                db.commit()
+                print("   ✅ Seeded opportunities in existing database!")
+            else:
+                print("⚠️  Database already has data. Skipping seed to avoid duplicates.")
             return
 
         teacher  = seed_teacher(db)
@@ -741,6 +841,7 @@ def main():
         questions = seed_questions(db, subject_topic["subjects"], subject_topic["topics"])
         seed_learning_performance(db, students, questions, subject_topic["topics"])
         seed_documents(db, subject_topic["subjects"])
+        seed_opportunities(db)
 
         db.commit()
         print("\n✅ Seed complete! Here's a summary:")

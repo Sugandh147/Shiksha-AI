@@ -3,12 +3,12 @@
 /**
  * src/app/tutor/page.tsx
  * ──────────────────────
- * AI Tutor Page grounded in Retrieval-Augmented Generation (RAG).
+ * AI Tutor Page grounded in Retrieval-Augmented Generation (RAG) & Vision AI Image Question Solver.
  * Features:
  *   - Grounded educational explanations with step-by-step reasoning & worked examples.
- *   - Source citations linking to trusted NCERT knowledge chunks.
- *   - Quick modifier controls: "Explain simpler", "Explain deeper", "Give me an example", "Give me a practice question".
- *   - Weak topic awareness & suggested follow-up chips.
+ *   - Multilingual explanation selection (English, Hindi, Hinglish).
+ *   - 📷 Scan Question (Vision AI multimodal solver for printed & handwritten math questions).
+ *   - Structured solution rendering: Problem, Concept, Steps, Answer, Verification, Similar Question.
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -16,12 +16,13 @@ import Link from "next/link";
 import {
   Brain, Send, Sparkles, BookOpen, ArrowLeft, Wand2, Lightbulb,
   CheckCircle2, HelpCircle, FileText, AlertTriangle, ShieldCheck,
-  ChevronDown, ChevronUp, RefreshCw, Bookmark, MessageSquare, Globe
+  ChevronDown, ChevronUp, RefreshCw, Bookmark, MessageSquare, Globe,
+  Camera, Upload, X, Image as ImageIcon, Check
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import api from "@/lib/api";
-import { TutorChatResponse, SourceCitation, WeakTopicItem } from "@/types";
+import { TutorChatResponse, SourceCitation, WeakTopicItem, ImageQuestionSolverResponse } from "@/types";
 import { SUPPORTED_LANGUAGES } from "@/lib/languages";
 
 interface ChatBubble {
@@ -29,6 +30,8 @@ interface ChatBubble {
   sender: "user" | "assistant";
   text?: string;
   response?: TutorChatResponse;
+  visionResponse?: ImageQuestionSolverResponse;
+  imageUrl?: string;
   timestamp: string;
 }
 
@@ -43,6 +46,7 @@ export default function AITutorPage() {
 function AITutorContent() {
   const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [inputMessage, setInputMessage] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("Quadratic Equations");
@@ -52,11 +56,17 @@ function AITutorContent() {
   const [weakTopics, setWeakTopics] = useState<WeakTopicItem[]>([]);
   const [showSourcesForMsg, setShowSourcesForMsg] = useState<Record<string, boolean>>({});
 
+  // 📷 Vision Scan Question State
+  const [showScanModal, setShowScanModal] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [scanLoading, setScanLoading] = useState(false);
+
   const [messages, setMessages] = useState<ChatBubble[]>([
     {
       id: "welcome",
       sender: "assistant",
-      text: `Hello ${user?.full_name?.split(" ")[0] || "there"}! I'm your AI Mathematics Tutor. Ask me anything about Algebra, Quadratic Equations, Trigonometry, Geometry, or Statistics in English, Hindi (हिंदी), or Hinglish!`,
+      text: `Hello ${user?.full_name?.split(" ")[0] || "there"}! I'm your AI Mathematics Tutor. Ask me anything in English, Hindi, or Hinglish, or click "📷 Scan Question" to upload a printed or handwritten question photo!`,
       timestamp: "Just now",
     },
   ]);
@@ -67,7 +77,7 @@ function AITutorContent() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, loading]);
+  }, [messages, loading, scanLoading]);
 
   const fetchWeakTopics = async () => {
     try {
@@ -89,7 +99,6 @@ function AITutorContent() {
     const text = textToSend || inputMessage;
     if (!text.trim() || loading) return;
 
-    // Detect implicit language requests in text if prompt contains Hindi/Hinglish triggers
     let effectiveLang = selectedLanguage;
     const lowerText = text.toLowerCase();
     if (lowerText.includes("in hindi") || lowerText.includes("hindi me")) {
@@ -153,6 +162,75 @@ function AITutorContent() {
     }
   };
 
+  // 📷 Handle Image File Selection
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedImageFile(file);
+      setImagePreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  // 📷 Handle Image Question Upload & Vision Solving
+  const handleScanImageUpload = async () => {
+    if (!selectedImageFile || scanLoading) return;
+
+    setScanLoading(true);
+    const userImgBubbleId = `user-img-${Date.now()}`;
+    const previewUrl = imagePreviewUrl || undefined;
+
+    const newMsgs: ChatBubble[] = [
+      ...messages,
+      {
+        id: userImgBubbleId,
+        sender: "user",
+        text: "📷 Scanned question image uploaded for step-by-step solution.",
+        imageUrl: previewUrl,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      },
+    ];
+    setMessages(newMsgs);
+    setShowScanModal(false);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedImageFile);
+      formData.append("topic_name", selectedTopic);
+      formData.append("language", selectedLanguage);
+
+      const res = await api.postForm<ImageQuestionSolverResponse>("/tutor/scan-question", formData);
+
+      const aiVisionBubbleId = `ai-vis-${Date.now()}`;
+      setMessages([
+        ...newMsgs,
+        {
+          id: aiVisionBubbleId,
+          sender: "assistant",
+          visionResponse: res,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
+    } catch (err: unknown) {
+      const errorMsg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ||
+        "Could not analyze question image. Please upload a clear image of a math question.";
+
+      setMessages([
+        ...newMsgs,
+        {
+          id: `err-${Date.now()}`,
+          sender: "assistant",
+          text: `⚠️ Vision AI Error: ${errorMsg}`,
+          timestamp: "Just now",
+        },
+      ]);
+    } finally {
+      setScanLoading(false);
+      setSelectedImageFile(null);
+      setImagePreviewUrl(null);
+    }
+  };
+
   const toggleSources = (msgId: string) => {
     setShowSourcesForMsg((prev) => ({ ...prev, [msgId]: !prev[msgId] }));
   };
@@ -180,17 +258,25 @@ function AITutorContent() {
                   Shiksha<span className="gradient-text">AI</span> Tutor
                 </h1>
                 <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
-                  <ShieldCheck className="w-3 h-3" /> Grounded Multilingual RAG Engine
+                  <ShieldCheck className="w-3 h-3" /> Grounded Multilingual Vision Engine
                 </p>
               </div>
             </div>
           </div>
 
           <div className="hidden sm:flex items-center gap-3">
+            {/* 📷 Scan Question Button */}
+            <button
+              onClick={() => setShowScanModal(true)}
+              className="btn btn-primary py-1.5 px-3.5 text-xs flex items-center gap-1.5 shadow-lg"
+              style={{ background: "linear-gradient(135deg, #10b981, #059669)" }}
+            >
+              <Camera className="w-4 h-4" /> 📷 Scan Question
+            </button>
+
             {/* Multilingual Language Selector */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pl-3 border-l" style={{ borderColor: "var(--color-border)" }}>
               <Globe className="w-4 h-4 text-indigo-400" />
-              <span className="text-xs font-semibold text-muted">Language:</span>
               <select
                 value={selectedLanguage}
                 onChange={(e) => setSelectedLanguage(e.target.value)}
@@ -199,7 +285,7 @@ function AITutorContent() {
               >
                 {SUPPORTED_LANGUAGES.map((lang) => (
                   <option key={lang.code} value={lang.code}>
-                    {lang.flag} {lang.nativeName} ({lang.name})
+                    {lang.flag} {lang.nativeName}
                   </option>
                 ))}
               </select>
@@ -207,7 +293,6 @@ function AITutorContent() {
 
             {/* Topic Selector */}
             <div className="flex items-center gap-2 pl-3 border-l" style={{ borderColor: "var(--color-border)" }}>
-              <span className="text-xs font-semibold text-muted">Topic:</span>
               <select
                 value={selectedTopic}
                 onChange={(e) => setSelectedTopic(e.target.value)}
@@ -260,10 +345,13 @@ function AITutorContent() {
               {/* User Bubble */}
               {bubble.sender === "user" && (
                 <div
-                  className="max-w-xl p-4 rounded-2xl text-sm font-medium text-white shadow-md"
+                  className="max-w-xl p-4 rounded-2xl text-sm font-medium text-white shadow-md space-y-2"
                   style={{ background: "linear-gradient(135deg, #6366f1, #4f46e5)", borderRadius: "20px 20px 4px 20px" }}
                 >
-                  {bubble.text}
+                  {bubble.imageUrl && (
+                    <img src={bubble.imageUrl} alt="Uploaded math question" className="rounded-xl max-h-48 border border-white/20 object-cover" />
+                  )}
+                  <div>{bubble.text}</div>
                 </div>
               )}
 
@@ -277,7 +365,6 @@ function AITutorContent() {
               {/* Assistant Structured RAG Response */}
               {bubble.sender === "assistant" && bubble.response && (
                 <div className="glass max-w-3xl w-full p-6 md:p-8 rounded-3xl space-y-6 border shadow-xl" style={{ borderColor: "var(--color-border)" }}>
-                  {/* Grounded Explanation */}
                   <div>
                     <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2 flex items-center gap-1.5">
                       <BookOpen className="w-4 h-4" /> Grounded Explanation
@@ -287,7 +374,6 @@ function AITutorContent() {
                     </p>
                   </div>
 
-                  {/* Step-by-step Reasoning Cards */}
                   {bubble.response.step_by_step.length > 0 && (
                     <div className="space-y-2">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
@@ -306,7 +392,6 @@ function AITutorContent() {
                     </div>
                   )}
 
-                  {/* Worked Example */}
                   {bubble.response.example && (
                     <div className="p-4 rounded-2xl border bg-indigo-500/10 border-indigo-500/30 text-xs md:text-sm space-y-1">
                       <h4 className="font-bold text-indigo-300 flex items-center gap-1.5">
@@ -318,7 +403,6 @@ function AITutorContent() {
                     </div>
                   )}
 
-                  {/* Source Citations & References */}
                   {bubble.response.sources.length > 0 && (
                     <div className="pt-2 border-t" style={{ borderColor: "var(--color-border)" }}>
                       <button
@@ -350,7 +434,6 @@ function AITutorContent() {
                     </div>
                   )}
 
-                  {/* Suggested Follow-up Chips */}
                   {bubble.response.follow_up.length > 0 && (
                     <div className="pt-2 flex flex-wrap gap-2">
                       <span className="text-xs text-muted w-full font-semibold mb-1">Suggested Follow-ups:</span>
@@ -368,13 +451,91 @@ function AITutorContent() {
                   )}
                 </div>
               )}
+
+              {/* 📷 Assistant Vision Solution Response Card */}
+              {bubble.sender === "assistant" && bubble.visionResponse && (
+                <div className="glass max-w-3xl w-full p-6 md:p-8 rounded-3xl space-y-6 border shadow-2xl" style={{ borderColor: "rgba(16, 185, 129, 0.4)", background: "rgba(16, 185, 129, 0.04)" }}>
+                  {/* Extracted Question Callout */}
+                  <div className="p-4 rounded-2xl bg-surface border space-y-1" style={{ borderColor: "var(--color-border)" }}>
+                    <div className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                      <Camera className="w-4 h-4" /> Extracted Question (Vision AI OCR)
+                    </div>
+                    <div className="text-sm font-semibold text-white italic">
+                      "{bubble.visionResponse.extracted_question}"
+                    </div>
+                  </div>
+
+                  {/* Problem & Core Concept */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-surface border space-y-1" style={{ borderColor: "var(--color-border)" }}>
+                      <div className="text-xs font-bold uppercase tracking-wider text-indigo-400">Problem Formulation</div>
+                      <div className="text-xs font-medium text-white">{bubble.visionResponse.problem}</div>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-surface border space-y-1" style={{ borderColor: "var(--color-border)" }}>
+                      <div className="text-xs font-bold uppercase tracking-wider text-amber-400">Core Mathematical Concept</div>
+                      <div className="text-xs font-medium text-amber-200">{bubble.visionResponse.concept}</div>
+                    </div>
+                  </div>
+
+                  {/* Step-by-Step Resolution */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4" /> Step-by-Step Resolution
+                    </h4>
+                    <div className="space-y-2">
+                      {bubble.visionResponse.steps.map((st: string, idx: number) => (
+                        <div key={idx} className="p-3.5 rounded-xl bg-surface border text-xs font-medium flex items-start gap-3" style={{ borderColor: "var(--color-border)" }}>
+                          <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs shrink-0">
+                            {idx + 1}
+                          </span>
+                          <span>{st}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Final Answer & Step-by-Step Verification */}
+                  <div className="p-5 rounded-2xl border bg-emerald-500/10 border-emerald-500/30 space-y-3">
+                    <div>
+                      <div className="text-xs font-bold uppercase tracking-wider text-emerald-300 mb-1">Calculated Final Answer</div>
+                      <div className="text-lg font-extrabold text-emerald-400 font-mono">{bubble.visionResponse.answer}</div>
+                    </div>
+                    <div className="pt-2 border-t border-emerald-500/20">
+                      <div className="text-xs font-bold text-emerald-300 flex items-center gap-1 mb-1">
+                        <Check className="w-4 h-4 text-emerald-400" /> Step-by-Step Verification:
+                      </div>
+                      <div className="text-xs text-emerald-100/90 leading-relaxed font-medium">
+                        {bubble.visionResponse.verification}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Similar Practice Problem Reinforcement */}
+                  <div className="p-5 rounded-2xl border bg-indigo-500/10 border-indigo-500/30 space-y-2">
+                    <div className="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-indigo-400" /> Similar Practice Question for Reinforcement
+                    </div>
+                    <p className="text-xs font-semibold text-white">
+                      {bubble.visionResponse.similar_question}
+                    </p>
+                    <button
+                      onClick={() => handleSendMessage(`Help me solve this similar question: ${bubble.visionResponse?.similar_question}`)}
+                      className="btn btn-secondary py-1.5 px-3 text-xs flex items-center gap-1.5 text-indigo-300 border-indigo-500/40 hover:bg-indigo-500/20"
+                    >
+                      <Wand2 className="w-3.5 h-3.5" /> Solve This Similar Question
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
 
-          {loading && (
+          {(loading || scanLoading) && (
             <div className="flex items-center gap-3 p-4 rounded-2xl glass w-max">
               <div className="w-5 h-5 rounded-full animate-spin border-2 border-indigo-500 border-t-transparent" />
-              <span className="text-xs text-muted">Retrieving knowledge chunks & generating grounded explanation...</span>
+              <span className="text-xs text-muted">
+                {scanLoading ? "Extracting math text & solving question using Vision AI..." : "Retrieving knowledge chunks & generating grounded explanation..."}
+              </span>
             </div>
           )}
 
@@ -383,9 +544,16 @@ function AITutorContent() {
 
         {/* Action Controls & Input Section */}
         <div className="sticky bottom-4 z-30 space-y-3">
-          {/* Quick Modifier Action Buttons */}
+          {/* Quick Action Buttons including Scan Question */}
           <div className="flex flex-wrap items-center gap-2 px-2">
-            <span className="text-xs font-semibold text-muted mr-1">Quick Modifiers:</span>
+            <button
+              onClick={() => setShowScanModal(true)}
+              className="btn btn-primary py-1.5 px-3.5 text-xs flex items-center gap-1.5 rounded-full shadow-lg"
+              style={{ background: "linear-gradient(135deg, #10b981, #059669)" }}
+            >
+              <Camera className="w-3.5 h-3.5" /> 📷 Scan Question
+            </button>
+            <span className="text-xs font-semibold text-muted mx-1">|</span>
             <button
               onClick={() => handleSendMessage(inputMessage || `Explain ${selectedTopic} in simpler terms`, "simpler")}
               className="btn btn-secondary py-1.5 px-3 text-xs flex items-center gap-1.5 rounded-full"
@@ -404,15 +572,9 @@ function AITutorContent() {
             >
               <Lightbulb className="w-3 h-3 text-amber-400" /> Give me an example
             </button>
-            <button
-              onClick={() => handleSendMessage(inputMessage || `Give me a practice question for ${selectedTopic}`, "practice")}
-              className="btn btn-secondary py-1.5 px-3 text-xs flex items-center gap-1.5 rounded-full"
-            >
-              <FileText className="w-3 h-3 text-rose-400" /> Give me a practice question
-            </button>
           </div>
 
-          {/* Input Box */}
+          {/* Input Form */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -425,21 +587,120 @@ function AITutorContent() {
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder={`Ask AI Tutor about ${selectedTopic} (e.g. How do I solve quadratic equations?)...`}
+              placeholder={`Ask AI Tutor about ${selectedTopic} or click 📷 Scan Question to upload photo...`}
               className="flex-1 bg-transparent border-none px-4 py-3 text-sm focus:outline-none"
               style={{ color: "var(--color-text)" }}
             />
             <button
+              type="button"
+              onClick={() => setShowScanModal(true)}
+              className="p-3 rounded-xl hover:bg-surface text-emerald-400 transition-colors shrink-0"
+              title="Upload question photo"
+            >
+              <Camera className="w-5 h-5" />
+            </button>
+            <button
               type="submit"
-              disabled={!inputMessage.trim() || loading}
+              disabled={!inputMessage.trim() || loading || scanLoading}
               className="btn btn-primary p-3 rounded-xl flex items-center justify-center shrink-0"
-              style={{ opacity: !inputMessage.trim() || loading ? 0.5 : 1 }}
+              style={{ opacity: !inputMessage.trim() || loading || scanLoading ? 0.5 : 1 }}
             >
               <Send className="w-4 h-4" />
             </button>
           </form>
         </div>
       </main>
+
+      {/* 📷 Scan Question Modal */}
+      {showScanModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="glass max-w-lg w-full p-6 rounded-3xl border shadow-2xl space-y-6 relative" style={{ borderColor: "var(--color-border)" }}>
+            <button
+              onClick={() => {
+                setShowScanModal(false);
+                setSelectedImageFile(null);
+                setImagePreviewUrl(null);
+              }}
+              className="absolute top-4 right-4 p-2 text-muted hover:text-white rounded-full hover:bg-surface"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-1">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Camera className="w-6 h-6 text-emerald-400" /> 📷 Scan Math Question
+              </h2>
+              <p className="text-xs text-muted">
+                Upload or photograph a printed or handwritten mathematics question. Vision AI will extract and solve it step-by-step!
+              </p>
+            </div>
+
+            {/* Dropzone & File Input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+
+            {!imagePreviewUrl ? (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer hover:border-emerald-500 transition-all bg-surface/50 space-y-3"
+                style={{ borderColor: "var(--color-border)" }}
+              >
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 mx-auto flex items-center justify-center">
+                  <Upload className="w-7 h-7" />
+                </div>
+                <div>
+                  <div className="font-bold text-sm text-white">Click to upload question photo</div>
+                  <div className="text-xs text-muted mt-1">Supports printed & handwritten math questions (PNG, JPG, WebP)</div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="relative rounded-2xl overflow-hidden border max-h-60 flex items-center justify-center bg-black/40" style={{ borderColor: "var(--color-border)" }}>
+                  <img src={imagePreviewUrl} alt="Selected math question" className="max-h-56 object-contain" />
+                  <button
+                    onClick={() => {
+                      setSelectedImageFile(null);
+                      setImagePreviewUrl(null);
+                    }}
+                    className="absolute top-2 right-2 p-1.5 bg-black/70 rounded-full text-white hover:bg-black"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
+                  <ImageIcon className="w-4 h-4" /> {selectedImageFile?.name} ({Math.round((selectedImageFile?.size || 0)/1024)} KB)
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setShowScanModal(false);
+                  setSelectedImageFile(null);
+                  setImagePreviewUrl(null);
+                }}
+                className="btn btn-secondary py-2.5 px-4 text-xs font-semibold flex-1"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleScanImageUpload}
+                disabled={!selectedImageFile || scanLoading}
+                className="btn btn-primary py-2.5 px-4 text-xs font-bold flex-1 flex items-center justify-center gap-2"
+                style={{ background: "linear-gradient(135deg, #10b981, #059669)", opacity: !selectedImageFile || scanLoading ? 0.5 : 1 }}
+              >
+                {scanLoading ? "Analyzing Vision..." : "Scan & Solve Question"} <Sparkles className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

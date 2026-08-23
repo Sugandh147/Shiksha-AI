@@ -247,15 +247,36 @@ body {
 .animate-fade-in-up { animation: fadeInUp 0.5s ease forwards; }
 .animate-fade-in    { animation: fadeIn 0.4s ease forwards; }
 .animate-float      { animation: float 3s ease-in-out infinite; }
-.animate-pulse-slow { animation: pulse-slow 2s ease-in-out infinite; }
+/* ── Skeleton Shimmer Loader ────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
 
-/* ── Stagger animation delays ───────────────────────────────────────── */
-.delay-100 { animation-delay: 0.1s; }
-.delay-200 { animation-delay: 0.2s; }
-.delay-300 { animation-delay: 0.3s; }
-.delay-400 { animation-delay: 0.4s; }
-.delay-500 { animation-delay: 0.5s; }
+.skeleton {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 37%, #1e293b 63%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
 
-/* ── Section padding ────────────────────────────────────────────────── */
-.section { padding: 5rem 1.5rem; }
-.container { max-width: 1200px; margin: 0 auto; }
+/* ── Empty States & Micro Utilities ─────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-surface-3);
+}
+
+.empty-state-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--color-text-subtle);
+  margin-bottom: 1rem;
+}
+

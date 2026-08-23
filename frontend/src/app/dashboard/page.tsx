@@ -18,7 +18,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  Brain, Zap, BookOpen, LogOut, Flame, Trophy, Target,
+  Brain, Zap, BookOpen, LogOut, Flame, Trophy, Target, Award,
   ArrowRight, CheckCircle, AlertTriangle, Sparkles, User as UserIcon, Activity,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -176,6 +176,26 @@ function StudentDashboardContent() {
           </div>
           <Link href="/diagnostic" className="btn btn-primary text-xs py-2.5 px-5 flex items-center gap-2 shrink-0">
             <Sparkles className="w-4 h-4" /> Start Diagnostic Quiz <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {/* ── OpportunityMatch Card ─────────────────────────────────────── */}
+        <div className="glass rounded-2xl p-5 border flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ borderColor: "rgba(245, 158, 11, 0.4)", background: "rgba(245, 158, 11, 0.05)" }}>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+              <Award className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="font-bold text-sm text-white flex items-center gap-2">
+                OpportunityMatch Engine <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">Matches Available</span>
+              </div>
+              <p className="text-xs text-muted">
+                Matched public scholarships & Olympiads based on your grade level and DB performance.
+              </p>
+            </div>
+          </div>
+          <Link href="/opportunities" className="btn btn-primary py-2 px-4 text-xs font-bold shrink-0 flex items-center gap-1.5" style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}>
+            View Matched Opportunities <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 

@@ -387,3 +387,27 @@ class DocumentChunk(Base):
     created_at   = Column(DateTime(timezone=True), server_default=func.now())
 
     document = relationship("Document", back_populates="chunks")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 17. Opportunity  (Scholarships, Olympiads & Academic Competitions)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class Opportunity(Base):
+    __tablename__ = "opportunities"
+
+    id                     = Column(Integer, primary_key=True, index=True)
+    name                   = Column(String(255), nullable=False)
+    provider               = Column(String(200), nullable=False)
+    description            = Column(Text, nullable=False)
+    eligibility            = Column(Text, nullable=False)
+    benefit                = Column(Text, nullable=False)
+    deadline               = Column(String(50), nullable=False)
+    official_source        = Column(String(255), nullable=False)
+    application_url        = Column(String(512), nullable=False)
+    is_demo                = Column(Boolean, default=False)
+    target_education_level = Column(String(100), default="Class 8")
+    required_subjects      = Column(JSON, default=list)
+    minimum_mastery_score  = Column(Float, default=50.0)
+    created_at             = Column(DateTime(timezone=True), server_default=func.now())
+

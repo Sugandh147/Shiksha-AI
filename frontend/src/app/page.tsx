@@ -3,224 +3,223 @@
 /**
  * src/app/page.tsx
  * ─────────────────
- * ShikshaAI Landing Page — the first thing any visitor sees.
- *
- * Sections:
- *   1. Hero — headline, CTA, animated gradient orb
- *   2. Stats — impact numbers
- *   3. Features — 6 core feature cards
- *   4. How It Works — 3 step flow
- *   5. CTA — dual login buttons
+ * ShikshaAI Landing Page — Premium EdTech Startup Interface for Indian K-12.
  */
 
 import Link from "next/link";
-import { BookOpen, Brain, BarChart3, Users, Zap, Globe, ArrowRight, CheckCircle, Star } from "lucide-react";
+import { BookOpen, Brain, BarChart3, Users, Zap, Globe, ArrowRight, CheckCircle, Star, Camera, ShieldCheck, Award, Sparkles, ChevronRight } from "lucide-react";
 
 const features = [
   {
     icon: Brain,
-    title: "AI Socratic Tutor",
-    description: "Ask any question — get step-by-step Socratic guidance grounded in trusted NCERT textbooks, in your preferred language.",
+    title: "Grounded RAG AI Tutor",
+    description: "Ask any question — get grounded step-by-step reasoning citing official NCERT textbooks in English, Hindi, or Hinglish.",
     color: "#6366f1",
-    gradient: "from-indigo-500/20 to-indigo-500/5",
+    badge: "NCERT Grounded",
+  },
+  {
+    icon: Camera,
+    title: "📷 Scan Question Solver",
+    description: "Photograph or upload printed or handwritten math questions. Vision AI extracts math text & solves it step-by-step with verification.",
+    color: "#10b981",
+    badge: "Vision AI Multimodal",
   },
   {
     icon: Zap,
-    title: "Adaptive Practice",
-    description: "Questions automatically adjust to your level. Get harder when you're doing well, easier when you need support.",
-    color: "#10b981",
-    gradient: "from-emerald-500/20 to-emerald-500/5",
-  },
-  {
-    icon: BarChart3,
-    title: "Learning Analytics",
-    description: "Track your mastery score per topic, identify your weak areas, and celebrate your streak.",
+    title: "Adaptive Practice Engine",
+    description: "Questions auto-adjust to student skill mastery. Wrong answers trigger step-by-step concept explanations before resuming.",
     color: "#f59e0b",
-    gradient: "from-amber-500/20 to-amber-500/5",
+    badge: "Adaptive Rules",
   },
   {
     icon: Users,
-    title: "Teacher Dashboard",
-    description: "Teachers see class-wide mastery heatmaps and instantly identify students who need extra support.",
+    title: "ClassPulse Teacher Dashboard",
+    description: "Teachers see live class mastery heatmaps, transparent Learning Attention Indicators, and ask natural questions to Teacher Copilot.",
     color: "#ec4899",
-    gradient: "from-pink-500/20 to-pink-500/5",
+    badge: "Teacher Intelligence",
   },
   {
-    icon: BookOpen,
-    title: "Trusted RAG Knowledge",
-    description: "Every AI answer is grounded in verified NCERT curriculum content — no hallucinations, just facts.",
-    color: "#8b5cf6",
-    gradient: "from-violet-500/20 to-violet-500/5",
+    icon: Award,
+    title: "OpportunityMatch Engine",
+    description: "Matches students with verified public scholarships (NMMS, INSPIRE, YASASVI) & Olympiads with transparent match scores.",
+    color: "#06b6d4",
+    badge: "Public Scholarships",
   },
   {
     icon: Globe,
-    title: "Multi-lingual Support",
-    description: "Learn in English, Hindi, or Hinglish. ShikshaAI meets you where you are.",
-    color: "#06b6d4",
-    gradient: "from-cyan-500/20 to-cyan-500/5",
+    title: "Multilingual Indian Languages",
+    description: "Seamlessly switch explanation language between English, Devanagari Hindi, Hinglish, Tamil, Telugu, and Bengali.",
+    color: "#8b5cf6",
+    badge: "Indian Languages",
   },
 ];
 
 const steps = [
   {
     step: "01",
-    title: "Create your profile",
-    description: "Tell us your grade level, preferred language, and learning style. Takes 2 minutes.",
+    title: "Student Onboarding",
+    description: "Tell us your grade level (Classes 6-12), preferred language, and learning goals in 60 seconds.",
     color: "#6366f1",
   },
   {
     step: "02",
-    title: "Take the diagnostic quiz",
-    description: "A 5-question baseline assessment sets your personalized starting difficulty level.",
+    title: "Mathematics Diagnostic",
+    description: "A short 5-question baseline assessment calculates topic-level mastery across Algebra, Quadratic Equations, and Geometry.",
     color: "#10b981",
   },
   {
     step: "03",
-    title: "Learn, practice & grow",
-    description: "Chat with your AI tutor, solve adaptive questions, and track your mastery in real time.",
+    title: "AI Tutor & Opportunities",
+    description: "Solve scanned question photos, chat with AI Tutor in Hindi/English, practice weak topics, and apply for matched scholarships.",
     color: "#f59e0b",
   },
 ];
 
 const stats = [
-  { value: "10+", label: "Subjects Covered" },
-  { value: "3×", label: "Faster Concept Mastery" },
-  { value: "Multi", label: "lingual Support" },
-  { value: "Free", label: "For Every Student" },
+  { value: "NCERT", label: "Grounded Textbook Retrieval" },
+  { value: "100%", label: "Real Database Performance" },
+  { value: "3+", label: "Languages (EN, HI, Hinglish)" },
+  { value: "Free", label: "For Every Student & Teacher" },
 ];
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen" style={{ background: "var(--color-bg)" }}>
-      {/* ── Navbar ──────────────────────────────────────────────────────── */}
-      <nav className="glass fixed top-0 left-0 right-0 z-50 px-6 py-4">
-        <div className="container flex items-center justify-between">
-          <div className="flex items-center gap-2">
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+      {/* ── Top Navbar ──────────────────────────────────────────────────── */}
+      <nav className="glass sticky top-0 left-0 right-0 z-50 px-6 py-4 border-b" style={{ borderColor: "var(--color-border)" }}>
+        <div className="container max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg"
               style={{ background: "linear-gradient(135deg, #6366f1, #10b981)" }}
             >
-              <span className="text-white font-bold text-sm">S</span>
+              <Brain className="w-6 h-6 text-white" />
             </div>
-            <span className="font-bold text-lg text-white">
-              Shiksha<span className="gradient-text">AI</span>
-            </span>
+            <div>
+              <span className="font-extrabold text-xl tracking-tight text-white">
+                Shiksha<span className="gradient-text">AI</span>
+              </span>
+              <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 ml-2 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                India K-12 Ecosystem
+              </span>
+            </div>
           </div>
+
           <div className="flex items-center gap-3">
-            <Link href="/login" className="btn btn-secondary text-sm py-2 px-4">
+            <Link href="/login" className="btn btn-secondary text-xs py-2 px-4 font-semibold">
               Sign In
             </Link>
-            <Link href="/register" className="btn btn-primary text-sm py-2 px-4">
-              Get Started Free
+            <Link href="/login?demo=student" className="btn btn-primary text-xs py-2 px-4 font-bold glow-primary">
+              Demo Student Login
+            </Link>
+            <Link href="/login?demo=teacher" className="btn btn-secondary text-xs py-2 px-4 font-bold border-indigo-500/40 text-indigo-300">
+              Demo Teacher Login
             </Link>
           </div>
         </div>
       </nav>
 
       {/* ── Hero Section ────────────────────────────────────────────────── */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-        {/* Background glows */}
+      <section className="relative pt-24 pb-20 px-6 overflow-hidden">
+        {/* Ambient Radial Lighting Glows */}
         <div
-          className="absolute top-20 left-1/4 w-96 h-96 rounded-full opacity-20 blur-3xl pointer-events-none"
+          className="absolute top-10 left-1/4 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl pointer-events-none"
           style={{ background: "radial-gradient(circle, #6366f1, transparent)" }}
         />
         <div
-          className="absolute top-40 right-1/4 w-80 h-80 rounded-full opacity-15 blur-3xl pointer-events-none"
+          className="absolute top-32 right-1/4 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl pointer-events-none"
           style={{ background: "radial-gradient(circle, #10b981, transparent)" }}
         />
 
-        <div className="container text-center relative z-10">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 glass-light text-sm font-medium">
-            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-            <span style={{ color: "var(--color-text-muted)" }}>
-              Built for the <span className="text-white font-semibold">AI for Equitable Education</span> Hackathon
+        <div className="container max-w-6xl mx-auto text-center relative z-10 space-y-8">
+          {/* Top Pill Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-light text-xs font-semibold border border-indigo-500/30 animate-fade-in">
+            <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <span>
+              Intelligent Multilingual Learning Platform for <span className="text-white font-bold">Indian Education</span>
             </span>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6 animate-fade-in-up">
-            Every Student Deserves
-            <br />
-            <span className="gradient-text">a World-Class Tutor</span>
+          {/* Main Headline */}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight text-white">
+            Personalized AI Learning for Every Student, <br />
+            <span className="gradient-text">Grounded in NCERT Science & Math</span>
           </h1>
 
           {/* Subheadline */}
-          <p
-            className="text-xl md:text-2xl max-w-3xl mx-auto mb-10 animate-fade-in-up delay-100"
-            style={{ color: "var(--color-text-muted)" }}
-          >
-            ShikshaAI delivers personalized, curriculum-aligned AI tutoring in your language — 
-            bridging India&apos;s education gap, one student at a time.
+          <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-muted font-medium leading-relaxed">
+            ShikshaAI combines grounded Socratic RAG tutoring, 📷 Scan Question vision solving, adaptive practice, and teacher intelligence — supporting English, Hindi, and Hinglish.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up delay-200">
-            <Link href="/register?role=student" className="btn btn-primary text-base py-3 px-8 glow-primary">
-              Start Learning Free
-              <ArrowRight className="w-5 h-5" />
+          {/* Dual Primary Call to Actions */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-2">
+            <Link href="/login?demo=student" className="btn btn-primary text-sm py-3.5 px-8 font-bold glow-primary flex items-center gap-2 rounded-2xl w-full sm:w-auto">
+              Explore Student Experience <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link href="/register?role=teacher" className="btn btn-secondary text-base py-3 px-8">
-              I&apos;m a Teacher
-              <Users className="w-5 h-5" />
+            <Link href="/login?demo=teacher" className="btn btn-secondary text-sm py-3.5 px-8 font-bold flex items-center gap-2 rounded-2xl w-full sm:w-auto">
+              Explore Teacher ClassPulse <Users className="w-4 h-4 text-indigo-400" />
             </Link>
           </div>
 
-          {/* Trust signals */}
-          <div className="flex flex-wrap gap-6 justify-center mt-12 animate-fade-in-up delay-300">
-            {["✅ Free for all students", "📚 NCERT-aligned content", "🌐 Hindi & English support"].map((t) => (
-              <span key={t} className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-                {t}
-              </span>
-            ))}
+          {/* Trust Highlights */}
+          <div className="pt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-muted font-semibold">
+            <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-400" /> Grounded NCERT Knowledge</span>
+            <span className="flex items-center gap-1.5"><Camera className="w-4 h-4 text-indigo-400" /> Printed & Handwritten Vision OCR</span>
+            <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-amber-400" /> English & Devanagari Hindi Support</span>
+            <span className="flex items-center gap-1.5"><Award className="w-4 h-4 text-cyan-400" /> Transparent Opportunity Matching</span>
           </div>
         </div>
       </section>
 
-      {/* ── Stats Bar ───────────────────────────────────────────────────── */}
-      <section className="py-12 px-6">
-        <div className="container">
-          <div className="glass rounded-2xl p-8 grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold gradient-text mb-1">{s.value}</div>
-                <div className="text-sm" style={{ color: "var(--color-text-muted)" }}>{s.label}</div>
+      {/* ── Impact Stats Strip ──────────────────────────────────────────── */}
+      <section className="py-8 px-6">
+        <div className="container max-w-6xl mx-auto">
+          <div className="glass rounded-3xl p-8 grid grid-cols-2 md:grid-cols-4 gap-8 border shadow-xl" style={{ borderColor: "var(--color-border)" }}>
+            {stats.map((s, idx) => (
+              <div key={idx} className="text-center space-y-1">
+                <div className="text-3xl md:text-4xl font-extrabold gradient-text">{s.value}</div>
+                <div className="text-xs font-semibold text-muted">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Features Section ────────────────────────────────────────────── */}
-      <section className="section px-6">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Everything a student needs,{" "}
-              <span className="gradient-text">powered by AI</span>
+      {/* ── Core Feature Showcase Grid ──────────────────────────────────── */}
+      <section className="py-16 px-6">
+        <div className="container max-w-6xl mx-auto space-y-12">
+          <div className="text-center space-y-3 max-w-2xl mx-auto">
+            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              Complete Learning Ecosystem
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+              Built specifically for the needs of <span className="gradient-text">Indian K-12 Education</span>
             </h2>
-            <p className="text-lg" style={{ color: "var(--color-text-muted)" }}>
-              From personalized tutoring to teacher analytics — ShikshaAI is a complete learning ecosystem.
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => {
               const Icon = feature.icon;
               return (
                 <div
                   key={feature.title}
-                  className="card animate-fade-in-up"
-                  style={{ animationDelay: `${i * 0.1}s` }}
+                  className="glass rounded-3xl p-6 md:p-8 space-y-4 border hover:border-indigo-500/50 transition-all group"
+                  style={{ borderColor: "var(--color-border)" }}
                 >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                    style={{ background: `${feature.color}20`, border: `1px solid ${feature.color}30` }}
-                  >
-                    <Icon className="w-6 h-6" style={{ color: feature.color }} />
+                  <div className="flex items-center justify-between">
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform"
+                      style={{ background: `${feature.color}20`, border: `1px solid ${feature.color}40` }}
+                    >
+                      <Icon className="w-6 h-6" style={{ color: feature.color }} />
+                    </div>
+                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-surface border text-muted" style={{ borderColor: "var(--color-border)" }}>
+                      {feature.badge}
+                    </span>
                   </div>
-                  <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+
+                  <h3 className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">{feature.title}</h3>
+                  <p className="text-xs text-muted leading-relaxed font-medium">
                     {feature.description}
                   </p>
                 </div>
@@ -230,76 +229,40 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── How It Works ────────────────────────────────────────────────── */}
-      <section className="section px-6">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Ready in <span className="gradient-text">3 steps</span>
+      {/* ── 3-Step Guided Workflow ──────────────────────────────────────── */}
+      <section className="py-16 px-6">
+        <div className="container max-w-6xl mx-auto space-y-12">
+          <div className="text-center space-y-3">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+              How ShikshaAI Works in <span className="gradient-text">3 Simple Steps</span>
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step, i) => (
-              <div key={step.step} className="text-center relative">
-                {i < steps.length - 1 && (
-                  <div
-                    className="hidden md:block absolute top-8 left-1/2 w-full h-px opacity-30"
-                    style={{ background: "linear-gradient(90deg, #6366f1, transparent)" }}
-                  />
-                )}
+              <div key={step.step} className="glass p-8 rounded-3xl border relative space-y-4" style={{ borderColor: "var(--color-border)" }}>
                 <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 font-bold text-xl"
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center font-extrabold text-xl shadow-lg"
                   style={{ background: `${step.color}20`, border: `1px solid ${step.color}40`, color: step.color }}
                 >
                   {step.step}
                 </div>
-                <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-                <p style={{ color: "var(--color-text-muted)" }}>{step.description}</p>
+                <h3 className="text-lg font-bold text-white">{step.title}</h3>
+                <p className="text-xs text-muted leading-relaxed font-medium">{step.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA Section ─────────────────────────────────────────────────── */}
-      <section className="section px-6">
-        <div className="container">
-          <div
-            className="rounded-3xl p-12 text-center relative overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)",
-              border: "1px solid rgba(99, 102, 241, 0.3)",
-            }}
-          >
-            <div
-              className="absolute inset-0 rounded-3xl opacity-50"
-              style={{ background: "radial-gradient(ellipse at center, rgba(99, 102, 241, 0.15) 0%, transparent 70%)" }}
-            />
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">
-                Start learning today. <span className="gradient-text">It&apos;s free.</span>
-              </h2>
-              <p className="text-lg mb-8" style={{ color: "var(--color-text-muted)" }}>
-                Join students across India getting personalized AI education support.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/register?role=student" className="btn btn-primary text-base py-3 px-8">
-                  I&apos;m a Student → Start Learning
-                </Link>
-                <Link href="/register?role=teacher" className="btn btn-secondary text-base py-3 px-8">
-                  I&apos;m a Teacher → View Dashboard
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <footer className="py-8 px-6 text-center" style={{ borderTop: "1px solid var(--color-border)" }}>
-        <p style={{ color: "var(--color-text-subtle)" }} className="text-sm">
-          Built with ❤️ for the AI Hackathon 2026 · ShikshaAI — AI for Equitable Education Access
-        </p>
+      <footer className="py-10 px-6 mt-auto border-t" style={{ borderColor: "var(--color-border)" }}>
+        <div className="container max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted">
+          <div className="flex items-center gap-2 font-bold text-white">
+            <Brain className="w-5 h-5 text-indigo-400" /> ShikshaAI — Intelligent Learning Ecosystem
+          </div>
+          <div>Grounded NCERT Science & Math AI for Indian K-12 Education</div>
+        </div>
       </footer>
     </div>
   );

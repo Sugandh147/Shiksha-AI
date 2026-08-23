@@ -132,3 +132,69 @@ def chat_with_ai_tutor(
         follow_up=rag_result["follow_up"],
         sources=sources_payload,
     )
+
+
+from fastapi import File, Form, UploadFile
+from app.core.vision_engine import VisionEngine
+from app.schemas.tutor import ImageQuestionSolverResponse
+
+
+@router.post("/scan-question", response_model=ImageQuestionSolverResponse)
+async def scan_and_solve_question_image(
+    file: UploadFile = File(...),
+    topic_name: str = Form(None),
+    language: str = Form("en"),
+    current_user: User = Depends(require_student),
+    db: Session = Depends(get_db),
+):
+    """
+    POST /tutor/scan-question
+    Upload printed or handwritten mathematics question image:
+      1. Extract question text & formulas using Vision AI model.
+      2. Perform RAG vector context retrieval over NCERT knowledge base.
+      3. Return structured solution: Problem, Concept, Steps, Answer, Verification, Similar Question.
+    """
+    image_bytes = await file.read()
+
+    # Fetch weak topics
+    weak_masteries = (
+        db.query(Topic.name)
+        .join(SkillMastery, SkillMastery.topic_id == Topic.id)
+        .filter(SkillMastery.student_id == current_user.id, SkillMastery.mastery_score < 70.0)
+        .all()
+    )
+    weak_topic_names = [wm[0] for wm in weak_masteries]
+
+    target_lang = language or current_user.preferred_language or "en"
+
+    result = VisionEngine.process_question_image(
+        image_bytes=image_bytes,
+        content_type=file.content_type or "image/jpeg",
+        db=db,
+        student=current_user,
+        weak_topics=weak_topic_names,
+        topic_name=topic_name,
+        language=target_lang,
+    )
+
+    sources_payload = [
+        SourceCitation(
+            title=s["title"],
+            source_url=s["source_url"],
+            chunk_text=s["chunk_text"],
+            relevance_score=s["relevance_score"],
+        )
+        for s in result["sources"]
+    ]
+
+    return ImageQuestionSolverResponse(
+        extracted_question=result["extracted_question"],
+        problem=result["problem"],
+        concept=result["concept"],
+        steps=result["steps"],
+        answer=result["answer"],
+        verification=result["verification"],
+        similar_question=result["similar_question"],
+        sources=sources_payload,
+    )
+

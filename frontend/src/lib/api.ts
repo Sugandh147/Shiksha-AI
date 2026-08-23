@@ -62,6 +62,11 @@ export const api = {
   post: <T>(url: string, data?: unknown) =>
     apiClient.post<T>(url, data).then((r) => r.data),
 
+  postForm: <T>(url: string, formData: FormData) =>
+    apiClient.post<T>(url, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }).then((r) => r.data),
+
   put: <T>(url: string, data?: unknown) =>
     apiClient.put<T>(url, data).then((r) => r.data),
 

@@ -19,7 +19,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import logging
 
 from app.config import settings
-from app.routers import health, auth, student, teacher, diagnostic, tutor, practice
+from app.routers import health, auth, student, teacher, diagnostic, tutor, practice, opportunities
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +108,7 @@ app.include_router(teacher.router,          prefix="/api/v1")
 app.include_router(diagnostic.router,       prefix="/api/v1")
 app.include_router(tutor.router,            prefix="/api/v1")
 app.include_router(practice.router,         prefix="/api/v1")
+app.include_router(opportunities.router,    prefix="/api/v1")
 
 
 # ── Root endpoint ─────────────────────────────────────────────────────────────
